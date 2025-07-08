@@ -7,7 +7,7 @@ public class ArrayStorage {
 
     //проходим по всей длинне массива size где нет null и присваеваем им значения null
     void clear() {
-        for (int i = 0; i <= size; i++) {
+        for (int i = 0; i < size; i++) {
             storage[i] = null;
         }
         size = 0;
@@ -16,27 +16,28 @@ public class ArrayStorage {
     //увеличиваем size на 1 и записываем туда новый Resume.
     void save(Resume r) {
         storage[size] = r;
-        size ++;
+        size++;
     }
 
     //перебираем массив до size пока не найдем нужное совпадение иначе возвращаем null.
     Resume get(String uuid) {
-        for (int i = 0; i <= size; i++) {
+        for (int i = 0; i < size; i++) {
             if (storage[i].uuid.equals(uuid)) {
                 return storage[i];
             }
         }
         return null;
     }
+
     //перебираем массив до size пока не найдем совпадение, затем перезаписываем туда последний индекс.
     //соотвестственно последний удаляем и уменьшаем size на 1.
     //добавил boolean для вывода сообщения в случае ненайденного uuid.
     void delete(String uuid) {
         boolean found = false;
-        for (int i = 0; i <= size; i++) {
+        for (int i = 0; i < size; i++) {
             if (storage[i].uuid.equals(uuid)) {
-                storage[i]=storage[size-1];
-                storage[size]=null;
+                storage[i] = storage[size - 1];
+                storage[size] = null;
                 size--;
                 found = true;
                 break;
