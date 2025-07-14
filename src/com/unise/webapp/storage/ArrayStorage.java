@@ -16,22 +16,29 @@ public class ArrayStorage {
         }
         size = 0;
     }
-    //метод update принимает 2 resume старый и новый а затем делает замену
-    //так же проверка на ноль
-    public void update (Resume r1, Resume r2){
-        //TODO check if resume not present
+    //метод update принимает новый resume и когда находит, заменяет его на новый
+    //так же проверка на отсутствие нужного uuid в базе данных с помощью boolean
+    public void update (Resume resume){
+        //TODO check if resume present
+        boolean found = false;
         for (int i = 0; i < size; i++) {
-            if (storage[i].uuid.equals(r1.uuid)){
-                storage[i] = r2;
-            }if (storage[i] == null) System.out.println("ERROR");
-        }
+            if (storage[i].uuid.equals(resume.uuid)){
+                storage[i] = resume;
+                found = true;
+                break;
+            }
+
+        } if (!found)System.out.println("ERROR не найден ваш " + resume.uuid);
     }
 
     //увеличиваем size на 1 и записываем туда новый Resume.
+    //проверка на null ячейки куда записываем, в случае присутствия resume выводим ошибку
     public void save(Resume r) {
-        //TODO check if resume present
-        storage[size] = r;
-        size++;
+        //TODO check if resume not present
+            if (storage[size] == null) {
+                storage[size] = r;
+                size++;
+            }else System.out.println("Ячейка занята: " + storage[size].uuid);
     }
 
     //перебираем массив до size пока не найдем нужное совпадение иначе возвращаем null.
