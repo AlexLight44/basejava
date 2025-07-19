@@ -17,17 +17,17 @@ public class ArrayStorage {
     }
 
     public void update(Resume r) {
-        int index = findIndex(r.uuid);
+        int index = findIndex(r.getUuid());
         if (index == -1) {
-            System.out.println("Resume " + r.uuid + "not exist");
+            System.out.println("Resume " + r.getUuid() + "not exist");
         } else {
             storage[index] = r;
         }
     }
 
     public void save(Resume r) {
-        if (findIndex(r.uuid) != -1) {
-            System.out.println("Resume " + r.uuid + " already exist");
+        if (findIndex(r.getUuid()) != -1) {
+            System.out.println("Resume " + r.getUuid() + " already exist");
         } else if (size > STORAGE_LIMIT) {
             System.out.println("Storage overflow");
         } else {
@@ -71,7 +71,7 @@ public class ArrayStorage {
 
     protected int findIndex(String uuid) {
         for (int i = 0; i < size; i++) {
-            if (storage[i].uuid.equals(uuid)) {
+            if (storage[i].getUuid().equals(uuid)) {
                 return i;
             }
         }
