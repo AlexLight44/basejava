@@ -11,28 +11,25 @@ public class ArrayStorage {
 
     int size;
 
-
-
-
     public void clear() {
         Arrays.fill(storage, 0, size, null);
         size = 0;
     }
 
-    public void update(Resume resume) {
-        int index = findIndex(resume.uuid);
+    public void update(Resume r) {
+        int index = findIndex(r.uuid);
         if (index == -1) {
-            System.out.println("Не найден ваш " + resume.uuid);
+            System.out.println("Resume " + r.uuid + "not exist");
         } else {
-            storage[index] = resume;
+            storage[index] = r;
         }
     }
 
     public void save(Resume r) {
-        if (size > STORAGE_LIMIT) {
-            System.out.println("База переполнена");
-        } else if (storage[size] != null) {
-            System.out.println("Ячейка занята");
+        if (findIndex(r.uuid) != -1) {
+            System.out.println("Resume " + r.uuid + " already exist");
+        } else if (size > STORAGE_LIMIT) {
+            System.out.println("Storage overflow");
         } else {
             storage[size] = r;
             size++;
@@ -42,7 +39,7 @@ public class ArrayStorage {
     public Resume get(String uuid) {
         int index = findIndex(uuid);
         if (index == -1) {
-            System.out.println("Не найден ваш " + uuid);
+            System.out.println("Resume " + uuid + "not exist");
             return null;
         } else {
             return storage[index];
@@ -53,7 +50,7 @@ public class ArrayStorage {
     public void delete(String uuid) {
         int index = findIndex(uuid);
         if (index == -1) {
-            System.out.println("Не найден ваш " + uuid);
+            System.out.println("Resume " + uuid + "not exist");
         } else {
             storage[index] = storage[size - 1];
             storage[size - 1] = null;
@@ -71,6 +68,7 @@ public class ArrayStorage {
     public int size() {
         return size;
     }
+
     protected int findIndex(String uuid) {
         for (int i = 0; i < size; i++) {
             if (storage[i].uuid.equals(uuid)) {
