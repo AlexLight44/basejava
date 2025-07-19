@@ -7,17 +7,12 @@ import java.util.Arrays;
  */
 public class ArrayStorage {
     static final int STORAGE_LIMIT = 10000;
-    int size;
-    protected final Resume[] storage = new Resume[10000];
+    static final Resume[] storage = new Resume[10000];
 
-    public int findIndex(String uuid) {
-        for (int i = 0; i < size; i++) {
-            if (storage[i].uuid.equals(uuid)) {
-                return i;
-            }
-        }
-        return -1;
-    }
+    int size;
+
+
+
 
     public void clear() {
         Arrays.fill(storage, 0, size, null);
@@ -50,7 +45,7 @@ public class ArrayStorage {
             System.out.println("Не найден ваш " + uuid);
             return null;
         } else {
-            return storage[findIndex(uuid)];
+            return storage[index];
         }
 
     }
@@ -60,7 +55,7 @@ public class ArrayStorage {
         if (index == -1) {
             System.out.println("Не найден ваш " + uuid);
         } else {
-            storage[findIndex(uuid)] = storage[size - 1];
+            storage[index] = storage[size - 1];
             storage[size - 1] = null;
             size--;
         }
@@ -75,5 +70,13 @@ public class ArrayStorage {
 
     public int size() {
         return size;
+    }
+    protected int findIndex(String uuid) {
+        for (int i = 0; i < size; i++) {
+            if (storage[i].uuid.equals(uuid)) {
+                return i;
+            }
+        }
+        return -1;
     }
 }
