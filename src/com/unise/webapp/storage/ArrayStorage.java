@@ -5,11 +5,11 @@ import java.util.Arrays;
 /**
  * Array based storage for Resumes
  */
-public class ArrayStorage {
-    static final int STORAGE_LIMIT = 10000;
-    static final Resume[] storage = new Resume[10000];
+public class ArrayStorage implements Storage{
+    private static final int STORAGE_LIMIT = 10000;
+    private static final Resume[] storage = new Resume[STORAGE_LIMIT];
 
-    int size;
+    private int size;
 
     public void clear() {
         Arrays.fill(storage, 0, size, null);
@@ -62,7 +62,7 @@ public class ArrayStorage {
      * @return array, contains only Resumes in storage (without null)
      */
     public Resume[] getAll() {
-        return Arrays.copyOf(storage, size);
+        return Arrays.copyOfRange(storage, 0, size);
     }
 
     public int size() {
@@ -77,4 +77,5 @@ public class ArrayStorage {
         }
         return -1;
     }
+
 }
