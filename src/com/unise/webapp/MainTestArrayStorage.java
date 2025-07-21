@@ -16,10 +16,15 @@ public class MainTestArrayStorage {
         r2.setUuid("uuid2");
         final Resume r3 = new Resume();
         r3.setUuid("uuid3");
+        final Resume r7 = new Resume();
+
+
 
         ARRAY_STORAGE.save(r1);
         ARRAY_STORAGE.save(r2);
         ARRAY_STORAGE.save(r3);
+        ARRAY_STORAGE.save(r7);
+
 
         printAll();
         System.out.println("Get r1: " + ARRAY_STORAGE.get(r1.getUuid()));
