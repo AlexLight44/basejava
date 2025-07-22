@@ -8,47 +8,24 @@ public class SortedArrayStorage extends AbstractArrayStorage {
 
 
     @Override
-    public void update(Resume r) {
-        int index = getIndex(r.getUuid());
-        if (index < 0) {
-            System.out.println("Resume " + r.getUuid() + " not exist");
-        } else {
-            storage[index] = r;
-        }
-    }
-
-
-    public void save(Resume r) {
-        int index = getIndex(r.getUuid());
-        if (index >= 0) {
-            System.out.println("Resume " + r.getUuid() + " already exist");
-        } else if (size >= STORAGE_LIMIT) {
-            System.out.println("Storage overflow");
-        } else {
-            index = -index -1;
-            System.arraycopy(storage, index +1, storage, index, size - index -1);
-                storage[index] = r;
-                size++;
-        }
-    }
-
-    @Override
-    public void delete(String uuid) {
-        int index = getIndex(uuid);
-        if (index < 0) {
-            System.out.println("Resume " + uuid + " not exist");
-        } else {
-            storage[index] = storage[size - 1];
-            storage[size - 1] = null;
-            size--;
-        }
-    }
-
-    @Override
-    protected int getIndex(String uuid) {
+    protected final int getIndex(String uuid) {
         Resume searchKey = new Resume();
         searchKey.setUuid(uuid);
         return Arrays.binarySearch(storage, 0, size, searchKey);
     }
 
+    @Override
+    protected void doSave(Resume r, int index) {
+        int indexDo = -index - 1;
+        System.arraycopy(storage, indexDo, storage, indexDo + 1, size - indexDo);
+        storage[indexDo] = r;
+    }
+
+    @Override
+    protected void doDelete(int index) {
+        int shift = size - index - 1;
+        if (shift > 0) {
+            System.arraycopy(storage, index + 1, storage, index, shift);
+        }
+    }
 }
