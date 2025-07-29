@@ -66,7 +66,7 @@
 
 ![Screenshot_5](https://user-images.githubusercontent.com/29703461/199550057-fce7cf3c-7040-422f-b490-7b85b47ae952.png)
 
-- Реализуйте методы `save, get, delete, clear, getAll, size` в классе `ArrayStorage`, организовав хранение резюме в массиве 
+- Реализуйте методы `save, get, delete, clear, getAll, size` в классе `main.java.webapp.storage.ArrayStorage`, организовав хранение резюме в массиве 
 - Храните все резюме в начале `storage` (без пустот в виде `null`), чтобы не перебирать каждый раз все 10_000 элементов
 - При реализации метода `delete` учитывайте, что после удаления резюме между оставшимися резюме не должно быть пустых ячеек, заполненных null
 ```
@@ -76,7 +76,7 @@ r1, r2, r3,..., rn, null, null,..., null
 <----- size ----->
 <------- storage.length (10000) ------->
 ```
-- Проверьте вашу реализацию с помощью классов `MainArray.main()` и `MainTestArrayStorage.main()`
+- Проверьте вашу реализацию с помощью классов `main.java.webapp.MainArray.main()` и `main.java.webapp.MainTestArrayStorage.main()`
 - Изучите дополнительные материалы по IntelliJ IDEA:
   - [Idea Wiki](https://github.com/JavaOPs/topjava/wiki/IDEA) 
   - [Отладка Java кода в IDEA. Основные возможности отладчика](https://youtu.be/Z1BQsf0A4xY)
@@ -97,7 +97,7 @@ r1, r2, r3,..., rn, null, null,..., null
 1. Не игнорируй подсказки IDEA (подсвечивает)
 1. В методе `clear()` обнуление массива предполагает обнуление (null) ячеек, где хранятся Resume, а не создание нового или присваивание ему null
 1. При реализации методов не используйте коллекции
-1. Не меняйте сигнатуры методов в `ArrayStorage`
+1. Не меняйте сигнатуры методов в `main.java.webapp.storage.ArrayStorage`
 1. Не добавляйте в `Resume` новые поля
 1. Resume r — давайте переменным осмысленные имена, например resume. r допустимо в коротких циклах и лямбда-выражениях
 

@@ -1,20 +1,20 @@
-package com.unise.webapp;
+package main.java.webapp;
 
-import com.unise.webapp.model.Resume;
-import com.unise.webapp.storage.ArrayStorage;
-import com.unise.webapp.storage.Storage;
+import main.java.webapp.model.Resume;
+import main.java.webapp.storage.SortedArrayStorage;
+import main.java.webapp.storage.Storage;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 /**
- * Interactive test for com.unise.webapp.storage.ArrayStorage implementation
+ * Interactive test for main.java.webapp.storage.ArrayStorage implementation
  * (just run, no need to understand)
  */
 public class MainArray {
 
-    private final static Storage ARRAY_STORAGE = new ArrayStorage();
+    private final static Storage ARRAY_STORAGE = new SortedArrayStorage();
 
     public static void main(String[] args) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));

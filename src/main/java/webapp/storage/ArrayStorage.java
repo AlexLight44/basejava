@@ -1,6 +1,6 @@
-package com.unise.webapp.storage;
+package main.java.webapp.storage;
 
-import com.unise.webapp.model.Resume;
+import main.java.webapp.model.Resume;
 
 /**
  * Array based storage for Resumes
@@ -19,7 +19,7 @@ public class ArrayStorage extends AbstractArrayStorage {
 
     @Override
     protected void doSave(Resume r, int index) {
-        storage[index] = r;
+        storage[size] = r;
     }
 
     @Override

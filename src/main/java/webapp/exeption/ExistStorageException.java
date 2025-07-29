@@ -1,4 +1,4 @@
-package com.unise.webapp.exeption;
+package main.java.webapp.exeption;
 
 public class ExistStorageException extends StorageException{
     public ExistStorageException(String uuid) {

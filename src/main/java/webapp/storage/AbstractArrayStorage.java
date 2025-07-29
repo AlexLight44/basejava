@@ -1,9 +1,9 @@
-package com.unise.webapp.storage;
+package main.java.webapp.storage;
 
-import com.unise.webapp.exeption.ExistStorageException;
-import com.unise.webapp.exeption.NotExistStorageException;
-import com.unise.webapp.exeption.StorageException;
-import com.unise.webapp.model.Resume;
+import main.java.webapp.exeption.ExistStorageException;
+import main.java.webapp.exeption.NotExistStorageException;
+import main.java.webapp.exeption.StorageException;
+import main.java.webapp.model.Resume;
 
 import java.util.Arrays;
 
@@ -48,9 +48,9 @@ public abstract class AbstractArrayStorage implements Storage {
         int index = getIndex(uuid);
         if (index < 0) {
             throw new NotExistStorageException(uuid);
-        } else {
-            return storage[index];
         }
+            return storage[index];
+
 
     }
 

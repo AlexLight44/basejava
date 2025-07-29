@@ -1,4 +1,4 @@
-package com.unise.webapp;
+package main.java.webapp;
 
 public class MainString {
     public static void main(String[] args) {

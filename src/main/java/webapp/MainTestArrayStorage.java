@@ -1,10 +1,10 @@
-package com.unise.webapp;
+package main.java.webapp;
 
-import com.unise.webapp.model.Resume;
-import com.unise.webapp.storage.SortedArrayStorage;
+import main.java.webapp.model.Resume;
+import main.java.webapp.storage.SortedArrayStorage;
 
 /**
- * Test for your com.unise.webapp.storage.ArrayStorage implementation
+ * Test for your main.java.webapp.storage.ArrayStorage implementation
  */
 public class MainTestArrayStorage {
     private static final SortedArrayStorage ARRAY_STORAGE = new SortedArrayStorage();
