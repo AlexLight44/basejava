@@ -1,7 +1,9 @@
 package main.java.webapp.storage;
 
-import static org.junit.Assert.*;
+public class SortedArrayStorageTest extends AbstractArrayStorageTest {
 
-public class SortedArrayStorageTest extends AbstractArrayStorageTest{
-   Storage storage = new SortedArrayStorage();
+    public SortedArrayStorageTest() {
+        super(new SortedArrayStorage());
+    }
+
 }
