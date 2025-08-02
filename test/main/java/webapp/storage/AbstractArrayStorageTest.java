@@ -74,19 +74,13 @@ public abstract class AbstractArrayStorageTest {
         storage.save(storage.get("uuid3"));
     }
 
-    @Test
-    public void saveStorageExeption() {
-        try {
-            for (int i = 4; i < 10000; i++) {
+    @Test(expected = StorageException.class)
+    public void saveStorageException() {
+        storage.clear();
+            for (int i = 0; i < ArrayStorage.STORAGE_LIMIT; i++) {
                 storage.save(new Resume("uuid" + i));
-            }
-        } catch (StorageException e) {
-            Assert.fail("overflow prematurely" + e.getMessage());
         }
-        try {
             storage.save(new Resume("uuid10001"));
-        } catch (StorageException e) {
-        }
     }
 
     @Test
@@ -123,7 +117,7 @@ public abstract class AbstractArrayStorageTest {
 
     @Test
     public void getAll() {
-        Resume[] expected = {RESUME_1, RESUME_2, RESUME_3, RESUME_4};
+        Resume[] expected = {RESUME_1, RESUME_2, RESUME_3};
         Assert.assertArrayEquals(expected, storage.getAll());
     }
 
