@@ -7,8 +7,8 @@ import main.java.webapp.model.Resume;
  */
 public class ArrayStorage extends AbstractArrayStorage {
 
-
-    protected int getIndex(String uuid) {
+    @Override
+    protected Integer getIndex(String uuid) {
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(uuid)) {
                 return i;
@@ -18,12 +18,13 @@ public class ArrayStorage extends AbstractArrayStorage {
     }
 
     @Override
-    protected void doSave(Resume r, int index) {
-        storage[size] = r;
+    protected void endDelete(Integer index) {
+        storage[index] = storage[size - 1];
     }
 
+
     @Override
-    protected void doDelete(int index) {
-        storage[index] = storage[size - 1];
+    protected void endSave(Resume r, int index) {
+        storage[size] = r;
     }
 }
