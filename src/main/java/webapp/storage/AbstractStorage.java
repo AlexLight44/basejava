@@ -4,51 +4,51 @@ import main.java.webapp.exeption.ExistStorageException;
 import main.java.webapp.exeption.NotExistStorageException;
 import main.java.webapp.model.Resume;
 
-public abstract class AbstractStorage implements Storage {
-    protected abstract Integer getIndex(String uuid);
+public abstract class AbstractStorage<SK> implements Storage {
+    protected abstract SK getSearchKey(String uuid);
 
-    protected abstract void doUpdate(Resume r, Integer index);
+    protected abstract void doUpdate(Resume r, SK searchKey);
 
-    protected abstract Resume doGet(Integer index);
+    protected abstract Resume doGet(SK searchKey);
 
-    protected abstract boolean isFind(Object index);
+    protected abstract boolean isExisting(SK searchKey);
 
-    protected abstract void doSave(Resume r, Integer index);
+    protected abstract void doSave(Resume r, SK searchKey);
 
-    protected abstract void doDelete(Integer index);
+    protected abstract void doDelete(SK searchKey);
 
 
     public void update(Resume r) {
-        Integer res = getFindIndex(r.getUuid());
+        SK res = getFindIndex(r.getUuid());
         doUpdate(r, res);
     }
 
     public void save(Resume r) {
-        Integer res = getNotFindIndex(r.getUuid());
+        SK res = getNotFindIndex(r.getUuid());
         doSave(r, res);
     }
 
     public Resume get(String uuid) {
-        Integer res = getFindIndex(uuid);
+        SK res = getFindIndex(uuid);
         return doGet(res);
     }
 
     public void delete(String uuid) {
-        Integer res = getFindIndex(uuid);
+        SK res = getFindIndex(uuid);
         doDelete(res);
     }
 
-    private Integer getFindIndex(String uuid) {
-        Integer index = getIndex(uuid);
-        if (!isFind(index)) {
+    private SK getFindIndex(String uuid) {
+        SK index = getSearchKey(uuid);
+        if (!isExisting(index)) {
             throw new NotExistStorageException(uuid);
         }
         return index;
     }
 
-    private Integer getNotFindIndex(String uuid) {
-        Integer index = getIndex(uuid);
-        if (isFind(index)) {
+    private SK getNotFindIndex(String uuid) {
+        SK index = getSearchKey(uuid);
+        if (isExisting(index)) {
             throw new ExistStorageException(uuid);
         }
         return index;
