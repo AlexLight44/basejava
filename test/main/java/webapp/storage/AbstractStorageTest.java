@@ -10,7 +10,6 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 public abstract class AbstractStorageTest {
 
     protected static final int INITIAL_CAPACITY = 3;
