@@ -3,9 +3,10 @@ package main.java.webapp.storage;
 import main.java.webapp.model.Resume;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
-public class MapStorage extends AbstractStorage<String> {
+public class MapUuidStorage extends AbstractStorage<String> {
 
     private final Map<String, Resume> storage = new LinkedHashMap<>();
 
@@ -45,8 +46,8 @@ public class MapStorage extends AbstractStorage<String> {
     }
 
     @Override
-    public Resume[] getAll() {
-        return storage.values().toArray(new Resume[0]);
+    public List<Resume> getAllSorted() {
+        return List.of(storage.values().toArray(new Resume[0]));
     }
 
     @Override
