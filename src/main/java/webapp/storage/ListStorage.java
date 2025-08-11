@@ -34,7 +34,7 @@ public class ListStorage extends AbstractStorage <Integer>{
     }
 
     @Override
-    public List<Resume> getAllSorted() {
+    protected List<Resume> doGetAll() {
         return list;
     }
 
