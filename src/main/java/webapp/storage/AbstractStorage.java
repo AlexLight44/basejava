@@ -6,8 +6,10 @@ import main.java.webapp.model.Resume;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Logger;
 
 public abstract class AbstractStorage<SK> implements Storage {
+    private static final Logger LOG = Logger.getLogger(AbstractStorage.class.getName());
     protected abstract SK getSearchKey(String uuid);
 
     protected abstract void doUpdate(Resume r, SK searchKey);
@@ -23,21 +25,25 @@ public abstract class AbstractStorage<SK> implements Storage {
 
 
     public void update(Resume r) {
+        LOG.info("Update " + r);
         SK res = getFindIndex(r.getUuid());
         doUpdate(r, res);
     }
 
     public void save(Resume r) {
+        LOG.info("Save " + r);
         SK res = getNotFindIndex(r.getUuid());
         doSave(r, res);
     }
 
     public Resume get(String uuid) {
+        LOG.info("Get " + uuid);
         SK res = getFindIndex(uuid);
         return doGet(res);
     }
 
     public void delete(String uuid) {
+        LOG.info("Delete " + uuid);
         SK res = getFindIndex(uuid);
         doDelete(res);
     }
@@ -45,6 +51,7 @@ public abstract class AbstractStorage<SK> implements Storage {
     private SK getFindIndex(String uuid) {
         SK index = getSearchKey(uuid);
         if (!isExisting(index)) {
+            LOG.warning("Resume " + uuid + " not exist");
             throw new NotExistStorageException(uuid);
         }
         return index;
@@ -53,6 +60,7 @@ public abstract class AbstractStorage<SK> implements Storage {
     private SK getNotFindIndex(String uuid) {
         SK index = getSearchKey(uuid);
         if (isExisting(index)) {
+            LOG.warning("Resume " + uuid + " already exist");
             throw new ExistStorageException(uuid);
         }
         return index;
@@ -60,6 +68,7 @@ public abstract class AbstractStorage<SK> implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
+        LOG.info("getAllSorted");
         List<Resume> list = doGetAll();
         list.sort(Comparator.comparing(Resume::getFullName).thenComparing(Resume::getUuid));
         return list;

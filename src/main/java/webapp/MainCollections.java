@@ -1,7 +1,6 @@
 package main.java.webapp;
 
 import main.java.webapp.model.Resume;
-import main.java.webapp.storage.ArrayStorage;
 
 import java.util.*;
 
@@ -53,12 +52,28 @@ public class MainCollections {
         for (Map.Entry<String, Resume> entry : map.entrySet()){
             System.out.println(entry.getValue());
         }
-        ArrayStorage arrayStorage = new ArrayStorage();
-        arrayStorage.save(RESUME_1);
-        arrayStorage.save(RESUME_2);
-        arrayStorage.save(RESUME_3);
-        arrayStorage.save(RESUME_4);
-        System.out.println(arrayStorage.getAllSorted());
-
+//        List<Resume> resumes = Arrays.asList(RESUME_1, RESUME_2, RESUME_3);
+//        resumes = new ArrayList<>();
+//
+//        resumes.remove(1);
+//        System.out.println(resumes);
+        N_Resume nResume = new N_Resume("d","ww2", 214);
+        Ignore<? super Resume> resumeIgnore = new Ignore<>();
+        resumeIgnore.vv(nResume);
     }
+}
+class Ignore<SD>{
+
+    void vv(SD slack){
+        System.out.println(slack);
+    }
+}
+class N_Resume extends Resume{
+    int anti;
+
+    public N_Resume(String uuid, String fullName, int anti) {
+        super(uuid, fullName);
+        this.anti = anti;
+    }
+
 }
