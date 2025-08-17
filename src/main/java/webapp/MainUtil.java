@@ -12,6 +12,7 @@ public class MainUtil {
         String b = "222";
         Interf inf = (a,z)-> a.length()+z.length();
         System.out.println(inf.meth(s, b));
+
     }
 
     @FunctionalInterface

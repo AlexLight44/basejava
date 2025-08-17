@@ -46,10 +46,10 @@ public class MainCollections {
         map.put(UUID_2, RESUME_2);
         map.put(UUID_3, RESUME_3);
         //Bad!
-        for (String uuid : map.keySet()){
+        for (String uuid : map.keySet()) {
             System.out.println(map.get(uuid));
         }
-        for (Map.Entry<String, Resume> entry : map.entrySet()){
+        for (Map.Entry<String, Resume> entry : map.entrySet()) {
             System.out.println(entry.getValue());
         }
 //        List<Resume> resumes = Arrays.asList(RESUME_1, RESUME_2, RESUME_3);
@@ -57,23 +57,7 @@ public class MainCollections {
 //
 //        resumes.remove(1);
 //        System.out.println(resumes);
-        N_Resume nResume = new N_Resume("d","ww2", 214);
-        Ignore<? super Resume> resumeIgnore = new Ignore<>();
-        resumeIgnore.vv(nResume);
-    }
-}
-class Ignore<SD>{
 
-    void vv(SD slack){
-        System.out.println(slack);
-    }
-}
-class N_Resume extends Resume{
-    int anti;
-
-    public N_Resume(String uuid, String fullName, int anti) {
-        super(uuid, fullName);
-        this.anti = anti;
     }
 
 }
