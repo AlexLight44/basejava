@@ -7,7 +7,7 @@ public enum SectionType {
     QUALIFICATIONS("Квалификация"),
     EXPERIENCE("Опыт работы"),
     EDUCATION("Образование");
-    private String title;
+    private final String title;
 
     SectionType(String title) {
         this.title = title;
@@ -17,12 +17,4 @@ public enum SectionType {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    @Override
-    public String toString() {
-        return title + ": ";
-    }
 }

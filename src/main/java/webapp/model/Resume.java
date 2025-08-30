@@ -10,8 +10,8 @@ public class Resume implements Comparable<Resume> {
     // Unique identifier
     private final String uuid;
     private final String fullName;
-    private Map<ContactType, String> contact = new EnumMap<>(ContactType.class);
-    private Map<SectionType, Section> section = new EnumMap<>(SectionType.class);
+    private final Map<ContactType, String> contact = new EnumMap<>(ContactType.class);
+    private final Map<SectionType, Section> section = new EnumMap<>(SectionType.class);
 
     public Resume(String fullName) {
         this(UUID.randomUUID().toString(), fullName);
@@ -32,44 +32,30 @@ public class Resume implements Comparable<Resume> {
         return fullName;
     }
 
-    public Map<ContactType, String> getContact() {
-        return contact;
+    public String getContact(ContactType type) {
+        return contact.get(type);
     }
 
-    public void setContact(Map<ContactType, String> contact) {
-        this.contact = contact;
+
+    public Section getSection(SectionType type) {
+        return section.get(type);
     }
 
-    public Map<SectionType, Section> getSection() {
-        return section;
-    }
-
-    public void setSection(Map<SectionType, Section> selection) {
-        this.section = selection;
-    }
-    public void addContact(ContactType type, String info){
+    public void addContact(ContactType type, String info) {
         contact.put(type, info);
     }
-    public void addSection(SectionType type, String info){
+
+    public void addSection(SectionType type, String info) {
         section.put(type, new TextSection(info));
     }
 
-    public void addSection(SectionType type, String... info){
-        section.put(type, new ListSection(Arrays.asList(info)));
-    }
-    public StringBuilder getAllResume(){
-        StringBuilder str = new StringBuilder();
-        str.append(getFullName() + "\n");
-        str.append(getContact() + "\n");
-        str.append(getSection());
-        return str;
-    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Resume resume = (Resume) o;
-        return Objects.equals(uuid, resume.uuid) && Objects.equals(fullName, resume.fullName);
+        return fullName.equals(resume.fullName);
     }
 
     @Override
@@ -79,10 +65,7 @@ public class Resume implements Comparable<Resume> {
 
     @Override
     public String toString() {
-        return "Resume{" +
-                "uuid='" + uuid + '\'' +
-                ", fullName='" + fullName + '\'' +
-                '}';
+        return uuid + '(' + fullName + ')';
     }
 
     @Override
