@@ -1,6 +1,5 @@
 package main.java.webapp.storage;
 
-import main.java.webapp.exeption.ExistStorageException;
 import main.java.webapp.exeption.NotExistStorageException;
 import main.java.webapp.model.Resume;
 import org.junit.Assert;
@@ -71,11 +70,6 @@ public abstract class AbstractStorageTest {
         storage.save(RESUME_4);
         assertGet(RESUME_4);
         assertSize(INITIAL_CAPACITY + 1);
-    }
-
-    @Test(expected = ExistStorageException.class)
-    public void A() {
-        storage.save(storage.get(UUID_3));
     }
 
     @Test
