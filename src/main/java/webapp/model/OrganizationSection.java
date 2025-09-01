@@ -1,5 +1,6 @@
 package main.java.webapp.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -8,7 +9,7 @@ public class OrganizationSection extends Section{
 
     public OrganizationSection(List<Organization> organizations) {
         Objects.requireNonNull(organizations, "organizations must not be null");
-        this.organizations = organizations;
+        this.organizations = new ArrayList<>(organizations);
     }
 
     public List<Organization> getOrganizations() {

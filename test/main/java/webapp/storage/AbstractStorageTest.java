@@ -13,17 +13,16 @@ import java.util.List;
 public abstract class AbstractStorageTest {
 
     protected static final int INITIAL_CAPACITY = 3;
-
     protected static final String UUID_1 = "uuid1";
     protected static final String UUID_2 = "uuid2";
     protected static final String UUID_3 = "uuid3";
     protected static final String UUID_4 = "uuid4";
     protected static final String UUID_NOT_EXISTING = "dummy";
 
-    protected static final Resume RESUME_1 = new Resume(UUID_1, "Name1");
-    protected static final Resume RESUME_2 = new Resume(UUID_2, "Name2");
-    protected static final Resume RESUME_3 = new Resume(UUID_3, "Name3");
-    protected static final Resume RESUME_4 = new Resume(UUID_4, "Name4");
+    protected static final Resume RESUME_1 = ResumeTestData.createResume(UUID_1, "Name1");
+    protected static final Resume RESUME_2 = ResumeTestData.createResume(UUID_2, "Name2");
+    protected static final Resume RESUME_3 = ResumeTestData.createResume(UUID_3, "Name3");
+    protected static final Resume RESUME_4 = ResumeTestData.createResume(UUID_4, "Name4");
 
     protected final Storage storage;
 
@@ -57,7 +56,7 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() {
-        Resume update = new Resume(UUID_3, "Name3");
+        Resume update = ResumeTestData.createResume(UUID_3, "Name3");
         storage.update(update);
         Assert.assertSame(update, storage.get(UUID_3));
     }

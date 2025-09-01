@@ -8,6 +8,7 @@ public class Organization {
     private final String url;
     private final List<Period> periods;
 
+
     public Organization(String name, String url, List<Period> periods) {
         this.name = name;
         this.url = url;
