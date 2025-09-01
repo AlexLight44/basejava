@@ -74,7 +74,7 @@ public abstract class AbstractStorageTest {
     }
 
     @Test(expected = ExistStorageException.class)
-    public void saveExist() {
+    public void A() {
         storage.save(storage.get(UUID_3));
     }
 
