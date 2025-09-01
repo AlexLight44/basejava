@@ -9,7 +9,7 @@ import java.util.List;
 public class ResumeTestData {
 
     public static Resume createResume(String uuid, String fullName) {
-        Resume r = new Resume("Григорий Кислин");
+        Resume r = new Resume(uuid, fullName);
         r.addContact(ContactType.TELEPHONE, "+7(921) 855-0482");
         r.addContact(ContactType.EMAIL, "gkislin@yandex.ru");
         r.addContact(ContactType.LINKEDIN, "https://www.linkedin.com/in/gkislin/");
