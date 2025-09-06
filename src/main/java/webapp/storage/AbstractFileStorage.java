@@ -55,21 +55,21 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
-    protected void doSave(Resume r, File file) {
+    protected void doSave(Resume resume, File file) {
         try {
             file.createNewFile();
-            doWrite(r, file);
+            doWrite(resume, file);
         } catch (IOException e) {
             throw new StorageException("IO error", file.getName(), e);
         }
     }
 
-    protected abstract void doWrite(Resume r, File file) throws IOException;
+    protected abstract void doWrite(Resume resume, File file) throws IOException;
 
     @Override
     protected void doDelete(File file) {
         if(!file.delete()){
-            throw new StorageException("File do not delete", file.getName());
+            throw new StorageException("File has not been deleted", file.getName());
         }
     }
 
