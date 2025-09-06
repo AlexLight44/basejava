@@ -2,7 +2,7 @@ package main.java.webapp.storage;
 
 import main.java.webapp.model.*;
 
-import java.time.LocalDate;
+import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,25 +23,24 @@ public class ResumeTestData {
         r.addSection(SectionType.EXPERIENCE,
                 new OrganizationSection(List.of(
                         new Organization("Organization1", "http1",
+                                new Organization.Period(2010, Month.JANUARY, 2012, Month.FEBRUARY, "period1", "description1"),
+                                new Organization.Period(2012, Month.JANUARY, 2014, Month.FEBRUARY, "period2", "description2")
+                        ), new Organization("Organization2", "http2",
                                 Arrays.asList(
-                                        new Period(LocalDate.of(2015, 1, 12), LocalDate.of(2016, 1, 12), "title1", "description1"),
-                                        new Period(LocalDate.of(2016, 1, 12), LocalDate.of(2022, 1, 12), "title2", "description2")
-                                )), new Organization("Organization2", "http2",
-                                Arrays.asList(
-                                        new Period(LocalDate.of(2022, 1, 12), LocalDate.of(2023, 1, 12), "title3", "description3"),
-                                        new Period(LocalDate.of(2023, 1, 12), LocalDate.of(2025, 1, 12), "title4", "description4")
+                                        new Organization.Period(2014, Month.JANUARY, 2017, Month.JANUARY, "period3", "description3"),
+                                        new Organization.Period(2017, Month.JANUARY, 2020, Month.AUGUST, "period4", "description4")
 
                                 )))));
         r.addSection(SectionType.EDUCATION,
                 new OrganizationSection(List.of(
                         new Organization("Education1", "httpE1",
                                 Arrays.asList(
-                                        new Period(LocalDate.of(2010, 1, 12), LocalDate.of(2012, 1, 12), "title5", "description5"),
-                                        new Period(LocalDate.of(2016, 1, 12), LocalDate.of(2022, 1, 12), "title6", "description6")
+                                        new Organization.Period(2020, Month.JANUARY, 2022, Month.DECEMBER, "period5", "description5"),
+                                        new Organization.Period(2022, Month.JANUARY, 2024, Month.JANUARY, "period6", "description6")
                                 )), new Organization("Education2", "httpE2",
                                 Arrays.asList(
-                                        new Period(LocalDate.of(2022, 1, 12), LocalDate.of(2023, 1, 12), "title7", "description7"),
-                                        new Period(LocalDate.of(2023, 1, 12), LocalDate.of(2025, 1, 12), "title8", "description8")
+                                        new Organization.Period(2024, Month.JANUARY, "period7", "description7"),
+                                        new Organization.Period(2025, Month.JANUARY, "period8", "description8")
 
                                 )))));
         return r;

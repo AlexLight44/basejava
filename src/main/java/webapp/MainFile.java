@@ -9,7 +9,7 @@ public class MainFile {
     static File file = new File(directory);
     static List<String> list = new ArrayList<>();
 
-    static List<String> directories(File dir) {
+    public static List<String> directories(File dir) {
         if (file.isDirectory()) {
             list.add(dir.getName());
             File[] files = dir.listFiles();
