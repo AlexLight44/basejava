@@ -6,6 +6,7 @@ import java.util.Objects;
 
 public class ListSection extends Section {
     private final List<String> items;
+
     public ListSection(String... items) {
         this(Arrays.asList(items));
     }

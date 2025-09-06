@@ -48,7 +48,7 @@ public class MapUuidStorage extends AbstractStorage<String> {
 
     @Override
     public List<Resume> doGetAll() {
-       return new ArrayList<>(storage.values());
+        return new ArrayList<>(storage.values());
     }
 
     @Override

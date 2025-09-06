@@ -10,7 +10,7 @@ public class MainUtil {
         System.out.println(sup.get());
         String s = "abcde";
         String b = "222";
-        Interf inf = (a,z)-> a.length()+z.length();
+        Interf inf = (a, z) -> a.length() + z.length();
         System.out.println(inf.meth(s, b));
 
     }

@@ -5,7 +5,7 @@ import main.java.webapp.model.Resume;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListStorage extends AbstractStorage <Integer>{
+public class ListStorage extends AbstractStorage<Integer> {
     List<Resume> list = new ArrayList<>();
 
     @Override

@@ -5,7 +5,7 @@ import main.java.webapp.model.Resume;
 import org.junit.Assert;
 import org.junit.Test;
 
-public abstract class AbstractArrayStorageTest extends AbstractStorageTest{
+public abstract class AbstractArrayStorageTest extends AbstractStorageTest {
     protected AbstractArrayStorageTest(Storage storage) {
         super(storage);
     }
@@ -17,7 +17,7 @@ public abstract class AbstractArrayStorageTest extends AbstractStorageTest{
             for (int i = 0; i < ArrayStorage.STORAGE_LIMIT; i++) {
                 storage.save(new Resume(UUID_NOT_EXISTING + i));
             }
-        }catch (StorageException e){
+        } catch (StorageException e) {
             Assert.fail();
         }
         storage.save(new Resume("overflow"));

@@ -68,7 +68,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected void doDelete(File file) {
-        if(!file.delete()){
+        if (!file.delete()) {
             throw new StorageException("File has not been deleted", file.getName());
         }
     }
@@ -96,7 +96,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     protected File[] getListFiles() {
         File[] files = directory.listFiles();
-        if (files == null){
+        if (files == null) {
             throw new StorageException("File not found: ", directory.getName());
         }
         return files;
