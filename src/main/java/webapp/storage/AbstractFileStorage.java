@@ -33,7 +33,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
         try {
             doWrite(r, file);
         } catch (IOException e) {
-            throw new StorageException("IO errer", file.getName(), e);
+            throw new StorageException("IO error", file.getName(), e);
         }
     }
 
@@ -42,7 +42,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
         try {
             return doRead(file);
         } catch (IOException e) {
-            throw new StorageException("IO errer", file.getName(), e);
+            throw new StorageException("IO error", file.getName(), e);
         }
     }
 
@@ -53,13 +53,14 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
         return file.exists();
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
     protected void doSave(Resume r, File file) {
         try {
             file.createNewFile();
             doWrite(r, file);
         } catch (IOException e) {
-            throw new StorageException("IO errer", file.getName(), e);
+            throw new StorageException("IO error", file.getName(), e);
         }
     }
 
@@ -74,7 +75,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected List<Resume> doGetAll() {
-        List<Resume> resumes = new ArrayList<>(getListFiles().length);
+        List<Resume> resumes = new ArrayList<>();
         for (File file : getListFiles()) {
             resumes.add(doGet(file));
         }
