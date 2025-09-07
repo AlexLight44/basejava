@@ -33,7 +33,7 @@ public abstract class AbstractStorage<SK> implements Storage {
     }
 
     public void save(Resume r) {
-        LOG.info("Save " + r);
+        LOG.info("\u001B[32m" +"Save " + r);
         SK res = getNotFindIndex(r.getUuid());
         doSave(r, res);
     }

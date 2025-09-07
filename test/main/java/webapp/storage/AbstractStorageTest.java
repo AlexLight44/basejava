@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,6 +25,7 @@ public abstract class AbstractStorageTest {
     protected static final Resume RESUME_3 = ResumeTestData.createResume(UUID_3, "Name3");
     protected static final Resume RESUME_4 = ResumeTestData.createResume(UUID_4, "Name4");
 
+    protected static final File STORAGE_DIR = new File("C:\\projects\\basejava\\storage");
     protected final Storage storage;
 
     protected AbstractStorageTest(Storage storage) {
@@ -58,7 +60,7 @@ public abstract class AbstractStorageTest {
     public void update() {
         Resume update = ResumeTestData.createResume(UUID_3, "Name3");
         storage.update(update);
-        Assert.assertSame(update, storage.get(UUID_3));
+        Assert.assertEquals(update, storage.get(UUID_3));
     }
 
     @Test(expected = NotExistStorageException.class)

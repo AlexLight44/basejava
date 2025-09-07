@@ -1,10 +1,13 @@
 package main.java.webapp.model;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class OrganizationSection extends Section {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private final List<Organization> organizations;
 
     public OrganizationSection(List<Organization> organizations) {
