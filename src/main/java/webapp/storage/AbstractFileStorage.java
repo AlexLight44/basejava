@@ -94,7 +94,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
         return getListFiles().length;
     }
 
-    protected File[] getListFiles() {
+    private File[] getListFiles() {
         File[] files = directory.listFiles();
         if (files == null) {
             throw new StorageException("File not found: ", directory.getName());
