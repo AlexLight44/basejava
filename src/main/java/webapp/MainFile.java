@@ -6,26 +6,27 @@ import java.util.List;
 
 public class MainFile {
     static String directory = "C:\\projects\\basejava\\src";
-    static File file = new File(directory);
     static List<String> list = new ArrayList<>();
 
-    public static List<String> directories(File dir) {
-        if (file.isDirectory()) {
-            list.add(dir.getName());
-            File[] files = dir.listFiles();
+    public static void directories(File directory, int depth) {
+        for (int i = 0; i < depth; i++) {
+            System.out.print("  ");
+        }
+        System.out.println(directory.getName());
+        if (directory.isDirectory()) {
+            list.add(directory.getName());
+            File[] files = directory.listFiles();
             if (files != null) {
                 for (File f : files) {
-                    directories(f);
+                    directories(f, depth + 1);
                 }
             }
         }
-        return list;
     }
 
     public static void main(String[] args) {
-        List<String> directories = directories(file);
-        directories.forEach(System.out::println);
-
+        File file = new File(directory);
+        directories(file, 0);
 //        String filePath = "C:\\projects\\basejava";
 //        File file = new File(filePath);
 //        try {
