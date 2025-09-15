@@ -1,4 +1,4 @@
-package main.java.webapp.storage;
+package main.java.webapp.storage.memory;
 
 import main.java.webapp.model.Resume;
 

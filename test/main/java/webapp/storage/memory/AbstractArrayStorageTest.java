@@ -1,7 +1,10 @@
-package main.java.webapp.storage;
+package main.java.webapp.storage.memory;
 
 import main.java.webapp.exeption.StorageException;
 import main.java.webapp.model.Resume;
+import main.java.webapp.storage.AbstractStorageTest;
+import main.java.webapp.storage.Storage;
+import main.java.webapp.storage.file.ArrayStorage;
 import org.junit.Assert;
 import org.junit.Test;
 

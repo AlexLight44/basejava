@@ -1,8 +1,9 @@
-package main.java.webapp.storage;
+package main.java.webapp.storage.file;
 
 import main.java.webapp.exeption.StorageException;
 import main.java.webapp.model.Resume;
-import main.java.webapp.storage.strategy.Strategy;
+import main.java.webapp.storage.AbstractStorage;
+import main.java.webapp.storage.file.serializers.ISerializer;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -11,19 +12,20 @@ import java.util.Objects;
 
 public class FileStorage extends AbstractStorage<File> {
     private final File directory;
-    private Strategy strategy;
+    private final ISerializer serializer;
 
-    protected FileStorage(File directory, Strategy strategy) {
+    protected FileStorage(File directory, ISerializer serializer) {
         Objects.requireNonNull(directory, "directory must not be null");
+
         this.directory = directory;
-        this.strategy = strategy;
+        this.serializer = serializer;
+
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + " is not directory");
         }
         if (!directory.canRead() && directory.canWrite()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + " is not readable/writable");
         }
-
     }
 
     @Override
@@ -32,9 +34,12 @@ public class FileStorage extends AbstractStorage<File> {
     }
 
     @Override
-    protected void doUpdate(Resume r, File file) {
+    protected void doUpdate(Resume resume, File file) {
         try {
-            strategy.doWrite(r, new BufferedOutputStream(new FileOutputStream(file)));
+            try (var bos = new BufferedOutputStream(new FileOutputStream(file))) {
+                serializer.doWrite(resume, bos);
+                bos.flush();
+            }
         } catch (IOException e) {
             throw new StorageException("File write error", file.getName(), e);
         }
@@ -43,12 +48,13 @@ public class FileStorage extends AbstractStorage<File> {
     @Override
     protected Resume doGet(File file) {
         try {
-            return strategy.doRead(new BufferedInputStream(new FileInputStream(file)));
+            try (var bis = new BufferedInputStream(new FileInputStream(file))) {
+                return serializer.doRead(bis);
+            }
         } catch (IOException e) {
             throw new StorageException("IO error", file.getName(), e);
         }
     }
-
 
     @Override
     protected boolean isExisting(File file) {

@@ -1,10 +1,10 @@
 package main.java.webapp;
 
 import main.java.webapp.model.Resume;
-import main.java.webapp.storage.SortedArrayStorage;
+import main.java.webapp.storage.memory.SortedArrayStorage;
 
 /**
- * Test for your main.java.webapp.storage.ArrayStorage implementation
+ * Test for your main.java.webapp.storage.file.ArrayStorage implementation
  */
 public class MainTestArrayStorage {
     private static final SortedArrayStorage ARRAY_STORAGE = new SortedArrayStorage();

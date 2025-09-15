@@ -1,6 +1,7 @@
-package main.java.webapp.storage;
+package main.java.webapp.storage.file;
 
 import main.java.webapp.model.Resume;
+import main.java.webapp.storage.memory.AbstractArrayStorage;
 
 /**
  * Array based storage for Resumes

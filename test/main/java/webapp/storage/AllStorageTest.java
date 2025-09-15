@@ -1,5 +1,8 @@
 package main.java.webapp.storage;
 
+import main.java.webapp.storage.file.FileStorageTest;
+import main.java.webapp.storage.file.PathStorageTest;
+import main.java.webapp.storage.memory.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 

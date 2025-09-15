@@ -1,8 +1,9 @@
-package main.java.webapp.storage;
+package main.java.webapp.storage.file;
 
 import main.java.webapp.exeption.StorageException;
 import main.java.webapp.model.Resume;
-import main.java.webapp.storage.strategy.Strategy;
+import main.java.webapp.storage.AbstractStorage;
+import main.java.webapp.storage.file.serializers.ISerializer;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -10,19 +11,23 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PathStorage extends AbstractStorage<Path> {
-    private Path directory;
-    private Strategy strategy;
+    private final Path directory;
+    private final ISerializer serializer;
 
-    protected PathStorage(String dir, Strategy strategy) {
+    protected PathStorage(String dir, ISerializer serializer) {
         Objects.requireNonNull(dir, "directory must not be null");
-        this.strategy = strategy;
+        Objects.requireNonNull(serializer, "serializer must not be null");
+
+        this.serializer = serializer;
         directory = Paths.get(dir);
+
         if (!Files.isDirectory(directory) || !Files.isWritable(directory)) {
             throw new IllegalArgumentException(dir + " is not directory");
         }
@@ -30,13 +35,16 @@ public class PathStorage extends AbstractStorage<Path> {
 
     @Override
     protected Path getSearchKey(String uuid) {
-        return Paths.get(directory.toString(), uuid);
+        return directory.resolve(uuid);
     }
 
     @Override
-    protected void doUpdate(Resume r, Path path) {
+    protected void doUpdate(Resume resume, Path path) {
         try {
-            strategy.doWrite(r, new BufferedOutputStream(Files.newOutputStream(path)));
+            try (var bos = new BufferedOutputStream(Files.newOutputStream(path, StandardOpenOption.TRUNCATE_EXISTING))) {
+                serializer.doWrite(resume, bos);
+                bos.flush();
+            }
         } catch (IOException e) {
             throw new StorageException("Path write error", path.getFileName().toString(), e);
         }
@@ -45,12 +53,13 @@ public class PathStorage extends AbstractStorage<Path> {
     @Override
     protected Resume doGet(Path path) {
         try {
-            return strategy.doRead(new BufferedInputStream(Files.newInputStream(path)));
+            try (var bis = new BufferedInputStream(Files.newInputStream(path, StandardOpenOption.READ))) {
+                return serializer.doRead(bis);
+            }
         } catch (IOException e) {
             throw new StorageException("IO error", path.getFileName().toString(), e);
         }
     }
-
 
     @Override
     protected boolean isExisting(Path path) {
@@ -60,7 +69,10 @@ public class PathStorage extends AbstractStorage<Path> {
     @Override
     protected void doSave(Resume resume, Path path) {
         try {
-            Files.createFile(path);
+            try (var bos = new BufferedOutputStream(Files.newOutputStream(path, StandardOpenOption.CREATE))) {
+                serializer.doWrite(resume, bos);
+                bos.flush();
+            }
         } catch (IOException e) {
             throw new StorageException("IO error", path.getFileName().toString(), e);
         }

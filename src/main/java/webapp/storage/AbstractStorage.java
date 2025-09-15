@@ -33,7 +33,7 @@ public abstract class AbstractStorage<SK> implements Storage {
     }
 
     public void save(Resume r) {
-        LOG.info("\u001B[32m" +"Save " + r);
+        LOG.info("\u001B[32m" +"Save " + r);  //TODO move it to the config file when SLF4J is added
         SK res = getNotFindIndex(r.getUuid());
         doSave(r, res);
     }

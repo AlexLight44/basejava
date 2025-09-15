@@ -1,7 +1,7 @@
 package main.java.webapp;
 
 import main.java.webapp.model.Resume;
-import main.java.webapp.storage.SortedArrayStorage;
+import main.java.webapp.storage.memory.SortedArrayStorage;
 import main.java.webapp.storage.Storage;
 
 import java.io.BufferedReader;
@@ -10,7 +10,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 
 /**
- * Interactive test for main.java.webapp.storage.ArrayStorage implementation
+ * Interactive test for main.java.webapp.storage.file.ArrayStorage implementation
  * (just run, no need to understand)
  */
 public class MainArray {

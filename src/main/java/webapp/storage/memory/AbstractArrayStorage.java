@@ -1,7 +1,8 @@
-package main.java.webapp.storage;
+package main.java.webapp.storage.memory;
 
 import main.java.webapp.exeption.StorageException;
 import main.java.webapp.model.Resume;
+import main.java.webapp.storage.AbstractStorage;
 
 import java.util.Arrays;
 import java.util.List;
