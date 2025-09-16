@@ -1,4 +1,4 @@
-package main.java.webapp.exeption;
+package webapp.exeption;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;

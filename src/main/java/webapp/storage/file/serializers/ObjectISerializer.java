@@ -1,7 +1,7 @@
-package main.java.webapp.storage.file.serializers;
+package webapp.storage.file.serializers;
 
-import main.java.webapp.exeption.StorageException;
-import main.java.webapp.model.Resume;
+import webapp.exeption.StorageException;
+import webapp.model.Resume;
 
 import java.io.*;
 

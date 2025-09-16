@@ -1,28 +1,28 @@
 package main.java.webapp.storage.memory;
 
-import main.java.webapp.exeption.StorageException;
-import main.java.webapp.model.Resume;
+
 import main.java.webapp.storage.AbstractStorageTest;
-import main.java.webapp.storage.Storage;
-import main.java.webapp.storage.file.ArrayStorage;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import webapp.exeption.StorageException;
+import webapp.model.Resume;
+import webapp.storage.Storage;
+import webapp.storage.file.ArrayStorage;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public abstract class AbstractArrayStorageTest extends AbstractStorageTest {
     protected AbstractArrayStorageTest(Storage storage) {
         super(storage);
     }
 
-    @Test(expected = StorageException.class)
-    public void saveStorageException() {
+    @Test
+    void saveStorageException() {
         storage.clear();
-        try {
-            for (int i = 0; i < ArrayStorage.STORAGE_LIMIT; i++) {
-                storage.save(new Resume(UUID_NOT_EXISTING + i));
-            }
-        } catch (StorageException e) {
-            Assert.fail();
+        for (int i = 0; i < ArrayStorage.STORAGE_LIMIT; i++) {
+            storage.save(new Resume("uuid" + i));
         }
-        storage.save(new Resume("overflow"));
+        assertThrows(StorageException.class, () -> {
+            storage.save(new Resume("overflow"));
+        });
     }
 }

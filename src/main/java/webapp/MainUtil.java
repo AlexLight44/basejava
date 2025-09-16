@@ -1,4 +1,4 @@
-package main.java.webapp;
+package webapp;
 
 
 import java.util.function.Supplier;

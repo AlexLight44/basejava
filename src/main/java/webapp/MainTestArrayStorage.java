@@ -1,7 +1,7 @@
-package main.java.webapp;
+package webapp;
 
-import main.java.webapp.model.Resume;
-import main.java.webapp.storage.memory.SortedArrayStorage;
+import webapp.model.Resume;
+import webapp.storage.memory.SortedArrayStorage;
 
 /**
  * Test for your main.java.webapp.storage.file.ArrayStorage implementation

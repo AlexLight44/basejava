@@ -1,6 +1,7 @@
 package main.java.webapp.storage;
 
-import main.java.webapp.model.*;
+
+import webapp.model.*;
 
 import java.time.Month;
 import java.util.Arrays;

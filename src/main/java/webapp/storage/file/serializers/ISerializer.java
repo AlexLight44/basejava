@@ -1,6 +1,5 @@
-package main.java.webapp.storage.file.serializers;
-
-import main.java.webapp.model.Resume;
+package webapp.storage.file.serializers;
+import webapp.model.Resume;
 
 import java.io.IOException;
 import java.io.InputStream;

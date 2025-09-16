@@ -1,8 +1,8 @@
-package main.java.webapp.storage;
+package webapp.storage;
 
-import main.java.webapp.exeption.ExistStorageException;
-import main.java.webapp.exeption.NotExistStorageException;
-import main.java.webapp.model.Resume;
+import webapp.exeption.ExistStorageException;
+import webapp.exeption.NotExistStorageException;
+import webapp.model.Resume;
 
 import java.util.Comparator;
 import java.util.List;

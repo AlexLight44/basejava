@@ -1,10 +1,11 @@
 package main.java.webapp.storage.memory;
 
 import main.java.webapp.storage.AbstractStorageTest;
-import main.java.webapp.storage.memory.MapResumeStorage;
+import webapp.storage.file.PathStorage;
+import webapp.storage.file.serializers.ObjectISerializer;
 
 public class MapResumeStorageTest extends AbstractStorageTest {
     public MapResumeStorageTest() {
-        super(new MapResumeStorage());
+        super(new PathStorage(STORAGE_DIR.getAbsolutePath(), new ObjectISerializer()));
     }
 }

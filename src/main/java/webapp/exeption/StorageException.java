@@ -1,4 +1,4 @@
-package main.java.webapp.exeption;
+package webapp.exeption;
 
 public class StorageException extends RuntimeException {
     private final String uuid;

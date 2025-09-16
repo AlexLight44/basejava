@@ -1,7 +1,8 @@
 package main.java.webapp.storage.file;
 
 import main.java.webapp.storage.AbstractStorageTest;
-import main.java.webapp.storage.file.serializers.ObjectISerializer;
+import webapp.storage.file.FileStorage;
+import webapp.storage.file.serializers.ObjectISerializer;
 
 public class FileStorageTest extends AbstractStorageTest {
 

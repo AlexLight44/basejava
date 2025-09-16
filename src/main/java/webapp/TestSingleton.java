@@ -1,6 +1,6 @@
-package main.java.webapp;
+package webapp;
 
-import main.java.webapp.model.SectionType;
+import webapp.model.SectionType;
 
 public class TestSingleton {
     private static TestSingleton instance;

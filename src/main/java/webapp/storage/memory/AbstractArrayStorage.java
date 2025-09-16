@@ -1,8 +1,8 @@
-package main.java.webapp.storage.memory;
+package webapp.storage.memory;
 
-import main.java.webapp.exeption.StorageException;
-import main.java.webapp.model.Resume;
-import main.java.webapp.storage.AbstractStorage;
+import webapp.exeption.StorageException;
+import webapp.model.Resume;
+import webapp.storage.AbstractStorage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
  * Array based storage for Resumes
  */
 public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
-    protected static final int STORAGE_LIMIT = 10000;
+    public static final int STORAGE_LIMIT = 10000;
     protected static final Resume[] storage = new Resume[STORAGE_LIMIT];
 
     protected int size = 0;

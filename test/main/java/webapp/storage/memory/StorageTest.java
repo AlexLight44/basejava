@@ -1,7 +1,6 @@
 package main.java.webapp.storage.memory;
 
-import main.java.webapp.storage.file.ArrayStorage;
-import main.java.webapp.storage.memory.AbstractArrayStorageTest;
+import webapp.storage.file.ArrayStorage;
 
 public class StorageTest extends AbstractArrayStorageTest {
 

@@ -1,6 +1,6 @@
-package main.java.webapp.storage.memory;
+package webapp.storage.memory;
 
-import main.java.webapp.model.Resume;
+import webapp.model.Resume;
 
 import java.util.Arrays;
 import java.util.Comparator;

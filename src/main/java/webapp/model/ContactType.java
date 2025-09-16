@@ -1,4 +1,4 @@
-package main.java.webapp.model;
+package webapp.model;
 
 public enum ContactType {
     TELEPHONE("Тел.: "),

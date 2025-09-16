@@ -1,6 +1,6 @@
-package main.java.webapp;
+package webapp;
 
-import main.java.webapp.model.Resume;
+import webapp.model.Resume;
 
 import java.util.*;
 

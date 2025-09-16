@@ -1,6 +1,7 @@
-package main.java.webapp.storage;
+package webapp.storage;
 
-import main.java.webapp.model.Resume;
+
+import webapp.model.Resume;
 
 import java.util.List;
 

@@ -1,8 +1,8 @@
-package main.java.webapp;
+package webapp;
 
-import main.java.webapp.model.Resume;
-import main.java.webapp.storage.memory.SortedArrayStorage;
-import main.java.webapp.storage.Storage;
+import webapp.model.Resume;
+import webapp.storage.Storage;
+import webapp.storage.memory.SortedArrayStorage;
 
 import java.io.BufferedReader;
 import java.io.IOException;

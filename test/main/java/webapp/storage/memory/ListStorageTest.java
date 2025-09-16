@@ -1,7 +1,8 @@
 package main.java.webapp.storage.memory;
 
 import main.java.webapp.storage.AbstractStorageTest;
-import main.java.webapp.storage.memory.ListStorage;
+import webapp.storage.memory.ListStorage;
+
 
 public class ListStorageTest extends AbstractStorageTest {
 

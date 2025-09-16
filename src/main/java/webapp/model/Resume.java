@@ -1,8 +1,11 @@
-package main.java.webapp.model;
+package webapp.model;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.*;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Initial resume class

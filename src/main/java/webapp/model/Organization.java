@@ -1,4 +1,4 @@
-package main.java.webapp.model;
+package webapp.model;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -9,8 +9,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import static main.java.webapp.util.DateUtil.NOW;
-import static main.java.webapp.util.DateUtil.of;
+import static webapp.util.DateUtil.NOW;
+import static webapp.util.DateUtil.of;
+
 public class Organization implements Serializable {
     private final String name;
     private final String url;

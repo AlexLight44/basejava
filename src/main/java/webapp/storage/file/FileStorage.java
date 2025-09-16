@@ -1,9 +1,9 @@
-package main.java.webapp.storage.file;
+package webapp.storage.file;
 
-import main.java.webapp.exeption.StorageException;
-import main.java.webapp.model.Resume;
-import main.java.webapp.storage.AbstractStorage;
-import main.java.webapp.storage.file.serializers.ISerializer;
+import webapp.exeption.StorageException;
+import webapp.model.Resume;
+import webapp.storage.AbstractStorage;
+import webapp.storage.file.serializers.ISerializer;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ public class FileStorage extends AbstractStorage<File> {
     private final File directory;
     private final ISerializer serializer;
 
-    protected FileStorage(File directory, ISerializer serializer) {
+    public FileStorage(File directory, ISerializer serializer) {
         Objects.requireNonNull(directory, "directory must not be null");
 
         this.directory = directory;

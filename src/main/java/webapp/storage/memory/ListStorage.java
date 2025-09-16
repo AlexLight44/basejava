@@ -1,7 +1,8 @@
-package main.java.webapp.storage.memory;
+package webapp.storage.memory;
 
-import main.java.webapp.model.Resume;
-import main.java.webapp.storage.AbstractStorage;
+
+import webapp.model.Resume;
+import webapp.storage.AbstractStorage;
 
 import java.util.ArrayList;
 import java.util.List;

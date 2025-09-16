@@ -1,4 +1,4 @@
-package main.java.webapp.model;
+package webapp.model;
 
 import java.io.Serial;
 import java.util.ArrayList;

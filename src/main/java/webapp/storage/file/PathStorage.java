@@ -1,9 +1,9 @@
-package main.java.webapp.storage.file;
+package webapp.storage.file;
 
-import main.java.webapp.exeption.StorageException;
-import main.java.webapp.model.Resume;
-import main.java.webapp.storage.AbstractStorage;
-import main.java.webapp.storage.file.serializers.ISerializer;
+import webapp.exeption.StorageException;
+import webapp.model.Resume;
+import webapp.storage.AbstractStorage;
+import webapp.storage.file.serializers.ISerializer;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -21,7 +21,7 @@ public class PathStorage extends AbstractStorage<Path> {
     private final Path directory;
     private final ISerializer serializer;
 
-    protected PathStorage(String dir, ISerializer serializer) {
+    public PathStorage(String dir, ISerializer serializer) {
         Objects.requireNonNull(dir, "directory must not be null");
         Objects.requireNonNull(serializer, "serializer must not be null");
 
