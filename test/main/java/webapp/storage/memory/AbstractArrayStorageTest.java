@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import webapp.exeption.StorageException;
 import webapp.model.Resume;
 import webapp.storage.Storage;
-import webapp.storage.file.ArrayStorage;
+import webapp.storage.memory.ArrayStorage;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

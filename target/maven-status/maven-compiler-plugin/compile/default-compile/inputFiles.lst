@@ -1,5 +1,6 @@
 C:\projects\basejava\src\main\java\webapp\MainUtil.java
 C:\projects\basejava\src\main\java\webapp\model\TextSection.java
+C:\projects\basejava\src\main\java\webapp\util\LocalDateAdapter.java
 C:\projects\basejava\src\main\java\webapp\MainTestArrayStorage.java
 C:\projects\basejava\src\main\java\webapp\storage\Storage.java
 C:\projects\basejava\src\main\java\webapp\MainString.java
@@ -11,16 +12,17 @@ C:\projects\basejava\src\main\java\webapp\storage\memory\SortedArrayStorage.java
 C:\projects\basejava\src\main\java\webapp\TestSingleton.java
 C:\projects\basejava\src\main\java\webapp\MainFile.java
 C:\projects\basejava\src\main\java\webapp\model\Resume.java
+C:\projects\basejava\src\main\java\webapp\storage\file\serializers\ObjectSerializer.java
 C:\projects\basejava\src\main\java\webapp\storage\memory\ListStorage.java
 C:\projects\basejava\src\main\java\webapp\storage\memory\AbstractArrayStorage.java
 C:\projects\basejava\src\main\java\webapp\MainReflection.java
+C:\projects\basejava\src\main\java\webapp\util\XmlParser.java
 C:\projects\basejava\src\main\java\webapp\model\Section.java
 C:\projects\basejava\src\main\java\webapp\model\SectionType.java
-C:\projects\basejava\src\main\java\webapp\storage\file\serializers\ObjectISerializer.java
+C:\projects\basejava\src\main\java\webapp\storage\memory\ArrayStorage.java
 C:\projects\basejava\src\main\java\webapp\exeption\NotExistStorageException.java
 C:\projects\basejava\src\main\java\webapp\model\Organization.java
 C:\projects\basejava\src\main\java\webapp\model\OrganizationSection.java
-C:\projects\basejava\src\main\java\webapp\storage\file\ArrayStorage.java
 C:\projects\basejava\src\main\java\webapp\MainArray.java
 C:\projects\basejava\src\main\java\webapp\storage\file\PathStorage.java
 C:\projects\basejava\src\main\java\webapp\MainCollections.java
@@ -29,4 +31,5 @@ C:\projects\basejava\src\main\java\webapp\exeption\StorageException.java
 C:\projects\basejava\src\main\java\webapp\exeption\MainDate.java
 C:\projects\basejava\src\main\java\webapp\storage\AbstractStorage.java
 C:\projects\basejava\src\main\java\webapp\storage\file\FileStorage.java
+C:\projects\basejava\src\main\java\webapp\storage\file\serializers\XmlSerializer.java
 C:\projects\basejava\src\main\java\webapp\util\DateUtil.java

@@ -5,7 +5,7 @@ import webapp.model.Resume;
 
 import java.io.*;
 
-public class ObjectISerializer implements ISerializer {
+public class ObjectSerializer implements ISerializer {
     @Override
     public void doWrite(Resume resume, OutputStream os) throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(os)) {

@@ -10,7 +10,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 
 /**
- * Interactive test for main.java.webapp.storage.file.ArrayStorage implementation
+ * Interactive test for main.java.webapp.storage.memory.ArrayStorage implementation
  * (just run, no need to understand)
  */
 public class MainArray {

@@ -74,7 +74,7 @@ public class PathStorage extends AbstractStorage<Path> {
                 bos.flush();
             }
         } catch (IOException e) {
-            throw new StorageException("IO error", path.getFileName().toString(), e);
+            throw new StorageException("Couldn't create path", path.getFileName().toString(), e);
         }
         doUpdate(resume, path);
     }
@@ -107,7 +107,7 @@ public class PathStorage extends AbstractStorage<Path> {
         try {
             return Files.list(directory);
         } catch (IOException e) {
-            throw new StorageException("Directory read error", null);
+            throw new StorageException("Directory read error", null, e);
         }
     }
 }

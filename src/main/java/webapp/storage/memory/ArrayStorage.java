@@ -1,8 +1,7 @@
-package webapp.storage.file;
+package webapp.storage.memory;
 
 
 import webapp.model.Resume;
-import webapp.storage.memory.AbstractArrayStorage;
 
 /**
  * Array based storage for Resumes

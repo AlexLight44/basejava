@@ -4,7 +4,7 @@ import webapp.model.Resume;
 import webapp.storage.memory.SortedArrayStorage;
 
 /**
- * Test for your main.java.webapp.storage.file.ArrayStorage implementation
+ * Test for your main.java.webapp.storage.memory.ArrayStorage implementation
  */
 public class MainTestArrayStorage {
     private static final SortedArrayStorage ARRAY_STORAGE = new SortedArrayStorage();
