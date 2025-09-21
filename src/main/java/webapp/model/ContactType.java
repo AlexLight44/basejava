@@ -3,7 +3,6 @@ package webapp.model;
 public enum ContactType {
     TELEPHONE("Тел.: "),
     EMAIL("Почта: "),
-    SKYPE("Skype: "),
     LINKEDIN("Профиль в LinkedIn"),
     GITHUB("Профиль в GitHub"),
     STACKOVERFLOW("Профиль в Stackoverflow"),

@@ -16,13 +16,21 @@ public class TextSection extends Section {
         this.content = content;
     }
 
+    public TextSection(SectionType type, String content) {
+        super(type);
+        if (type != SectionType.OBJECTIVE && type != SectionType.PERSONAL) {
+            throw new IllegalStateException(type + " is not a valid section type");
+        }
+        this.content = content;
+
+    }
+
     public String getContent() {
         return content;
     }
 
-    @Override
-    public String toString() {
-        return content;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     @Override
@@ -36,5 +44,12 @@ public class TextSection extends Section {
     @Override
     public int hashCode() {
         return Objects.hash(content);
+    }
+
+    @Override
+    public String toString() {
+        return "TextSection{" +
+                "content='" + content + '\'' +
+                '}';
     }
 }

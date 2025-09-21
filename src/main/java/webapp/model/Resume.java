@@ -21,8 +21,8 @@ public class Resume implements Comparable<Resume>, Serializable {
     private static final long serialVersionUID = 1L;
     private String uuid;
     private String fullName;
-    private final Map<ContactType, String> contact = new EnumMap<>(ContactType.class);
-    private final Map<SectionType, Section> sections = new EnumMap<>(SectionType.class);
+    private Map<ContactType, String> contact = new EnumMap<>(ContactType.class);
+    private Map<SectionType, Section> sections = new EnumMap<>(SectionType.class);
 
     public Resume() {
     }
@@ -38,6 +38,13 @@ public class Resume implements Comparable<Resume>, Serializable {
         this.fullName = fullName;
     }
 
+    public Resume(String uuid, String fullName, Map<ContactType, String> contact, Map<SectionType, Section> sections) {
+        this.uuid = uuid;
+        this.fullName = fullName;
+        this.contact = contact;
+        this.sections = sections;
+    }
+
     public String getUuid() {
         return uuid;
     }
@@ -51,8 +58,8 @@ public class Resume implements Comparable<Resume>, Serializable {
     }
 
 
-    public Section getSection(SectionType type) {
-        return sections.get(type);
+    public Map <SectionType, Section> getSections() {
+        return sections;
     }
 
     public void addContact(ContactType type, String info) {
@@ -69,13 +76,14 @@ public class Resume implements Comparable<Resume>, Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Resume resume = (Resume) o;
-        return Objects.equals(uuid, resume.uuid) && Objects.equals(fullName, resume.fullName) && Objects.equals(contact, resume.contact) && Objects.equals(sections, resume.sections);
+        return Objects.equals(uuid, resume.uuid);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uuid, fullName, contact, sections);
+        return Objects.hashCode(uuid);
     }
+
 
     @Override
     public String toString() {

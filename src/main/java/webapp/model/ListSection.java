@@ -21,6 +21,15 @@ public class ListSection extends Section {
         Objects.requireNonNull(items, "items must not be null");
         this.items = items;
     }
+    public ListSection(SectionType type, List<String> list) {
+        super(type);
+        if (type != SectionType.ACHIEVEMENT && type != SectionType.QUALIFICATIONS) {
+            throw new IllegalStateException(type + " is not a valid section type");
+        }
+        this.items = list;
+    }
+
+
 
     public List<String> getItems() {
         return items;

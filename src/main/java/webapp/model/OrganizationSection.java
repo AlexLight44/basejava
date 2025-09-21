@@ -20,9 +20,22 @@ public class OrganizationSection extends Section {
         Objects.requireNonNull(organizations, "organizations must not be null");
         this.organizations = new ArrayList<>(organizations);
     }
+    public OrganizationSection(SectionType type, List<Organization> companies) {
+        super(type);
+
+        if (type != SectionType.EXPERIENCE && type != SectionType.EDUCATION) {
+            throw new IllegalStateException(type + " is not a valid section type");
+        }
+        this.organizations = companies;
+    }
+
 
     public List<Organization> getOrganizations() {
         return organizations;
+    }
+
+    public void setOrganizations(List<Organization> organizations) {
+        this.organizations = organizations;
     }
 
     @Override
