@@ -30,12 +30,5 @@ public abstract class Section implements Serializable {
         this.type = type;
     }
 
-    public static class SectionTypes {
-        public static final String TEXT_SECTION = "TextSection";
-        public static final String LIST_SECTION = "ListSection";
-        public static final String COMPANY_SECTION = "CompanySection";
-
-        private SectionTypes() {}
-    }
 
 }

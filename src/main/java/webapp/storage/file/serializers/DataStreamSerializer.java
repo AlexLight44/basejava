@@ -174,7 +174,7 @@ public class DataStreamSerializer implements ISerializer {
 
         var organizations = new ArrayList<Organization>();
         for (int i = 0; i < count; i++) {
-            var organization = readOrganization(dis);
+            organizations.add(readOrganization(dis));
         }
         return new OrganizationSection(type, organizations);
     }
