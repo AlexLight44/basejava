@@ -7,9 +7,11 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class Config {
+    protected static final File PROPS = new File("config\\resume.properties");
     private static final Config INSTANCE = new Config();
-    protected static final File PROPS = new File(".\\config\\resume.properties");
+
     private Properties properties = new Properties();
+    private File storageDir;
 
     public static Config get() {
         return INSTANCE;
@@ -18,9 +20,13 @@ public class Config {
     private Config() {
         try (InputStream inputStream = new FileInputStream(PROPS)) {
             properties.load(inputStream);
-            properties.getProperty("storage.dir");
+            storageDir = new File(properties.getProperty("storage.dir"));
         } catch (IOException e) {
             throw new IllegalStateException("Invalid config file " + PROPS.getAbsolutePath());
         }
+    }
+
+    public File getStorageDir() {
+        return storageDir;
     }
 }

@@ -4,6 +4,7 @@ package main.java.webapp.storage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import webapp.Config;
 import webapp.exeption.NotExistStorageException;
 import webapp.model.Resume;
 import webapp.storage.Storage;
@@ -29,7 +30,7 @@ public abstract class AbstractStorageTest {
     protected static final Resume RESUME_3 = ResumeTestData.createResume(UUID_3, "Name3");
     protected static final Resume RESUME_4 = ResumeTestData.createResume(UUID_4, "Name4");
 
-    protected static final File STORAGE_DIR = new File("C:\\projects\\basejava\\storage");
+    protected static final File STORAGE_DIR = Config.get().getStorageDir();
     protected final Storage storage;
 
     protected AbstractStorageTest(Storage storage) {
