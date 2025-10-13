@@ -58,7 +58,7 @@ public class Resume implements Comparable<Resume>, Serializable {
     }
 
 
-    public Map <SectionType, Section> getSections() {
+    public Map<SectionType, Section> getSections() {
         return sections;
     }
 
@@ -76,18 +76,18 @@ public class Resume implements Comparable<Resume>, Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Resume resume = (Resume) o;
-        return Objects.equals(uuid, resume.uuid);
+        return uuid.equals(resume.uuid) && fullName.equals(resume.fullName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(uuid);
+        return Objects.hash(uuid, fullName);
     }
 
 
     @Override
     public String toString() {
-        return uuid + '(' + fullName + ')';
+        return uuid + "(" + fullName + ")";
     }
 
     @Override

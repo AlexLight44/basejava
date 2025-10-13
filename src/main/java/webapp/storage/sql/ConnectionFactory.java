@@ -1,4 +1,4 @@
-package webapp.sql;
+package webapp.storage.sql;
 import java.sql.Connection;
 import java.sql.SQLException;
 public interface ConnectionFactory {
