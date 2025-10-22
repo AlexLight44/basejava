@@ -19,13 +19,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public void clear() {
-        final String query = "DELETE FROM resume";
-
-        sqlHelper.execute(query, ps ->
-        {
-            ps.execute();
-            return null;
-        });
+        sqlHelper.execute("DELETE FROM resume");
     }
 
     @Override
@@ -85,7 +79,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        final String query = "SELECT * FROM resume";
+        final String query = "SELECT * FROM resume ORDER BY full_name,uuid";
 
         return sqlHelper.execute(query, ps ->
         {

@@ -2,6 +2,7 @@ package main.java.webapp.storage;
 
 import main.java.webapp.storage.file.*;
 import main.java.webapp.storage.memory.*;
+import main.java.webapp.storage.sql.SqlStorageTest;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
@@ -16,6 +17,7 @@ import org.junit.platform.suite.api.Suite;
         PathStorageTest.class,
         XmlPathStorageTest.class,
         JsonPathStorageTest.class,
-        DataPathStorageTest.class})
+        DataPathStorageTest.class,
+        SqlStorageTest.class})
 public class AllStorageTest {
 }
