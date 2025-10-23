@@ -1,18 +1,19 @@
 package main.java.webapp.storage;
 
 
+import webapp.model.ContactType;
 import webapp.model.Resume;
 
 public class ResumeTestData {
 
     public static Resume createResume(String uuid, String fullName) {
         Resume r = new Resume(uuid, fullName);
-//        r.addContact(ContactType.TELEPHONE, "+7(921) 855-0482");
-//        r.addContact(ContactType.EMAIL, "gkislin@yandex.ru");
-//        r.addContact(ContactType.LINKEDIN, "https://www.linkedin.com/in/gkislin/");
-//        r.addContact(ContactType.GITHUB, "https://github.com/gkislin");
-//        r.addContact(ContactType.STACKOVERFLOW, "https://stackoverflow.com/users/548473/grigory-kislin");
-//        r.addContact(ContactType.HOME_PAGE, "http://gkislin.ru/");
+        r.addContact(ContactType.TELEPHONE, "+7(921) 855-0482");
+        r.addContact(ContactType.EMAIL, "gkislin@yandex.ru");
+        r.addContact(ContactType.LINKEDIN, "https://www.linkedin.com/in/gkislin/");
+        r.addContact(ContactType.GITHUB, "https://github.com/gkislin");
+        r.addContact(ContactType.STACKOVERFLOW, "https://stackoverflow.com/users/548473/grigory-kislin");
+        r.addContact(ContactType.HOME_PAGE, "http://gkislin.ru/");
 //        r.addSection(SectionType.OBJECTIVE, new TextSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
 //        r.addSection(SectionType.PERSONAL, new TextSection("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры."));
 //        r.addSection(SectionType.ACHIEVEMENT, new ListSection("Достижение1", "Достижение2"));

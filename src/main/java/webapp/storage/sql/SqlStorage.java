@@ -1,13 +1,16 @@
 package webapp.storage.sql;
 
 import webapp.exeption.NotExistStorageException;
+import webapp.model.ContactType;
 import webapp.model.Resume;
 import webapp.storage.Storage;
 
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SqlStorage implements Storage {
     private final SqlHelper sqlHelper;
@@ -39,19 +42,31 @@ public class SqlStorage implements Storage {
 
     @Override
     public void save(Resume r) {
-        final String query = "INSERT INTO resume (uuid, full_name) VALUES (?,?)";
+        final String queryName = "INSERT INTO resume (uuid, full_name) VALUES (?,?)";
+        final String queryContacts = "INSERT INTO contact (resume_uuid, type, value) VALUES (?,?,?)";
 
-        sqlHelper.execute(query, ps -> {
+        sqlHelper.execute(queryName, ps -> {
             ps.setString(1, r.getUuid());
             ps.setString(2, r.getFullName());
             ps.execute();
             return null;
         });
+        for (Map.Entry<ContactType, String> e : r.getContacts().entrySet())
+            sqlHelper.execute(queryContacts, ps -> {
+                ps.setString(1, r.getUuid());
+                ps.setString(2, e.getKey().name());
+                ps.setString(3, e.getValue());
+                ps.execute();
+                return null;
+            });
     }
 
     @Override
     public Resume get(String uuid) {
-        final String query = "SELECT * FROM resume r WHERE r.uuid = ?";
+        final String query = "SELECT * FROM resume r " +
+                "LEFT JOIN contact c " +
+                "ON r.uuid = c.resume_uuid " +
+                "WHERE r.uuid = ? ";
 
         return sqlHelper.execute(query, statement -> {
             statement.setString(1, uuid);
@@ -59,7 +74,15 @@ public class SqlStorage implements Storage {
             if (!resultSet.next()) {
                 throw new NotExistStorageException(uuid);
             }
-            return new Resume(uuid, resultSet.getString("full_name"));
+            Resume r = new Resume(uuid, resultSet.getString("full_name"));
+            do {
+                String value = resultSet.getString("value");
+                ContactType type = ContactType.valueOf(resultSet.getString("type"));
+                r.addContact(type, value);
+            } while (resultSet.next());
+
+            return r;
+
         });
     }
 
@@ -79,17 +102,24 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        final String query = "SELECT * FROM resume ORDER BY full_name,uuid";
-
+        final String query = "SELECT * FROM resume r LEFT JOIN contact c ON r.uuid = c.resume_uuid ORDER BY full_name,uuid";
+// доделать контакты тут
         return sqlHelper.execute(query, ps ->
         {
             try (ResultSet resultSet = ps.executeQuery()) {
-                List<Resume> resumes = new ArrayList<>();
+                Map<String, Resume> resumeMap = new LinkedHashMap<>();
                 while (resultSet.next()) {
-                    Resume resume = new Resume(resultSet.getString("uuid"), resultSet.getString("full_name"));
-                    resumes.add(resume);
+                    String uuid = resultSet.getString("uuid");
+                    String fullName = resultSet.getString("full_name");
+                    Resume resume = resumeMap.computeIfAbsent(uuid, k -> new Resume(uuid, fullName));
+
+                    String contactType = resultSet.getString("type");
+                    String contactValue = resultSet.getString("value");
+                    if (contactType != null && contactValue != null){
+                        resume.addContact(ContactType.valueOf(contactType), contactValue);
+                    }
                 }
-                return resumes;
+                return new ArrayList<>(resumeMap.values());
             }
         });
     }
