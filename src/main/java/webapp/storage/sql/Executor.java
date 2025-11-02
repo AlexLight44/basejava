@@ -7,10 +7,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class SqlHelper {
+public class Executor {
     private final ConnectionFactory connectionFactory;
 
-    public SqlHelper(ConnectionFactory connectionFactory) {
+    public Executor(ConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
     }
 
