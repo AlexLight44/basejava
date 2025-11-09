@@ -1,0 +1,14 @@
+header {
+    background: none repeat scroll 0 0 #c14979;
+    color: #4a9e2e;
+    font-size: 20px;
+    padding: 5px 20px;
+}
+
+footer {
+    background: none repeat scroll 0 0 #bd1d5a;
+    color: #318122;
+    font-size: 20px;
+    padding: 5px 20px;
+    margin: 20px 0;
+}
