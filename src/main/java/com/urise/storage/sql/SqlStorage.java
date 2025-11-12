@@ -141,221 +141,257 @@ public class SqlStorage implements Storage {
         });
     }
 
-    @Override
-    public int size() {
-        final String query = "SELECT COUNT(*) FROM resume";
+//method for HW[15]
+    public List<Resume> getAllSortedAnother() {
+        return executor.transactionExecute(conn -> {
+            Map<String, Resume> resumeMap = new LinkedHashMap<>();
 
-        return executor.execute(query, ps ->
-        {
-            try (ResultSet resultSet = ps.executeQuery()) {
-                if (resultSet.next()) {
-                    return resultSet.getInt(1);
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "SELECT uuid, full_name FROM resume ORDER BY full_name, uuid")) {
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        String uuid = rs.getString("uuid");
+                        String fullName = rs.getString("full_name");
+                        resumeMap.put(uuid, new Resume(uuid, fullName));
+                    }
                 }
-                return 0;
             }
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "SELECT resume_uuid, type, value FROM contact")) {
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        String resumeUuid = rs.getString("resume_uuid");
+                        Resume resume = resumeMap.get(resumeUuid);
+                        if (resume != null) {
+                            String type = rs.getString("type");
+                            String value = rs.getString("value");
+                            if (type != null && value != null) {
+                                resume.addContact(ContactType.valueOf(type), value);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return new ArrayList<>(resumeMap.values());
         });
     }
 
-    private void addSqlContacts(Resume r, Connection conn) throws SQLException {
-        try (PreparedStatement ps = conn.prepareStatement(INSERT_CONTACT)) {
-            for (Map.Entry<ContactType, String> e : r.getContacts().entrySet()) {
-                ps.setString(1, r.getUuid());
-                ps.setString(2, e.getKey().name());
-                ps.setString(3, e.getValue());
-                ps.addBatch();
+@Override
+public int size() {
+    final String query = "SELECT COUNT(*) FROM resume";
+
+    return executor.execute(query, ps ->
+    {
+        try (ResultSet resultSet = ps.executeQuery()) {
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
             }
-            ps.executeBatch();
+            return 0;
         }
-    }
+    });
+}
 
-    private void addSqlSections(Resume r, Connection conn) throws SQLException {
-        try (PreparedStatement ps = conn.prepareStatement(
-                "INSERT INTO section (resume_uuid, type, value) VALUES (?, ?, ?)")) {
-            for (Map.Entry<SectionType, Section> e : r.getSections().entrySet()) {
-                SectionType type = e.getKey();
-                Section section = e.getValue();
-                if (type == SectionType.EXPERIENCE || type == SectionType.EDUCATION) {
-                    continue;
-                }
-                String value;
-                if (section instanceof TextSection ts) {
-                    value = ts.getContent();
-                } else if (section instanceof ListSection ls) {
-                    value = String.join("\n", ls.getItems());
-                } else {
-                    throw new IllegalStateException("Unsupported section: " + section);
-                }
-                ps.setString(1, r.getUuid());
-                ps.setString(2, type.name());
-                ps.setString(3, value);
-                ps.addBatch();
-            }
-            ps.executeBatch();
-        }
-    }
-
-    private void addSqlOrganizationSections(Resume r, Connection conn) throws SQLException {
-        try (PreparedStatement psOrg = conn.prepareStatement(INSERT_ORGANIZATION, Statement.RETURN_GENERATED_KEYS);
-             PreparedStatement psPeriod = conn.prepareStatement(INSERT_PERIOD);
-             PreparedStatement psLink = conn.prepareStatement(INSERT_RESUME_SECTION)) {
-
-            for (SectionType type : List.of(SectionType.EXPERIENCE, SectionType.EDUCATION)) {
-                OrganizationSection orgSection = (OrganizationSection) r.getSection(type);
-                if (orgSection == null) continue;
-
-                int orgOrder = 0;
-                for (Organization org : orgSection.getOrganizations()) {
-                    psOrg.setString(1, org.getName());
-                    psOrg.setString(2, org.getUrl());
-                    psOrg.executeUpdate();
-
-                    int orgId = getGeneratedId(psOrg);
-
-                    for (Organization.Period period : org.getPeriods()) {
-                        psPeriod.setInt(1, orgId);
-                        psPeriod.setObject(2, period.getStartDate());
-                        psPeriod.setObject(3, period.getEndDate());
-                        psPeriod.setString(4, period.getTitle());
-                        psPeriod.setString(5, period.getDescription());
-                        psPeriod.addBatch();
-                    }
-                    psPeriod.executeBatch();
-                    psPeriod.clearBatch();
-
-                    psLink.setString(1, r.getUuid());
-                    psLink.setString(2, type.name());
-                    psLink.setInt(3, orgId);
-                    psLink.setInt(4, orgOrder++);
-                    psLink.addBatch();
-                }
-                psLink.executeBatch();
-                psLink.clearBatch();
-            }
-        }
-    }
-
-    private int getGeneratedId(PreparedStatement ps) throws SQLException {
-        try (ResultSet rs = ps.getGeneratedKeys()) {
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-            throw new SQLException("No ID returned");
-        }
-    }
-
-    private void loadSqlContacts(Resume r, Connection conn) throws SQLException {
-        try (PreparedStatement ps = conn.prepareStatement(LOAD_CONTACT)) {
+private void addSqlContacts(Resume r, Connection conn) throws SQLException {
+    try (PreparedStatement ps = conn.prepareStatement(INSERT_CONTACT)) {
+        for (Map.Entry<ContactType, String> e : r.getContacts().entrySet()) {
             ps.setString(1, r.getUuid());
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                ContactType type = ContactType.valueOf(rs.getString("type"));
-                String value = rs.getString("value");
-                r.addContact(type, value);
-            }
+            ps.setString(2, e.getKey().name());
+            ps.setString(3, e.getValue());
+            ps.addBatch();
         }
+        ps.executeBatch();
     }
+}
 
-    private void loadSqlSections(Resume r, Connection conn) throws SQLException {
-        try (PreparedStatement ps = conn.prepareStatement(LOAD_SECTION)) {
-            ps.setString(1, r.getUuid());
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                SectionType type = SectionType.valueOf(rs.getString("type"));
-                String value = rs.getString("value");
-                Section section = switch (type) {
-                    case OBJECTIVE, PERSONAL -> new TextSection(value);
-                    case ACHIEVEMENT, QUALIFICATIONS -> new ListSection(value.split("\n"));
-                    default -> throw new IllegalStateException();
-                };
-                r.addSection(type, section);
+private void addSqlSections(Resume r, Connection conn) throws SQLException {
+    try (PreparedStatement ps = conn.prepareStatement(
+            "INSERT INTO section (resume_uuid, type, value) VALUES (?, ?, ?)")) {
+        for (Map.Entry<SectionType, Section> e : r.getSections().entrySet()) {
+            SectionType type = e.getKey();
+            Section section = e.getValue();
+            if (type == SectionType.EXPERIENCE || type == SectionType.EDUCATION) {
+                continue;
             }
+            String value;
+            if (section instanceof TextSection ts) {
+                value = ts.getContent();
+            } else if (section instanceof ListSection ls) {
+                value = String.join("\n", ls.getItems());
+            } else {
+                throw new IllegalStateException("Unsupported section: " + section);
+            }
+            ps.setString(1, r.getUuid());
+            ps.setString(2, type.name());
+            ps.setString(3, value);
+            ps.addBatch();
         }
+        ps.executeBatch();
     }
+}
 
-    private void loadOrganizationSections(Resume r, Connection conn) throws SQLException {
-        Map<SectionType, List<Organization>> orgMap = new EnumMap<>(SectionType.class);
-        orgMap.put(SectionType.EXPERIENCE, new ArrayList<>());
-        orgMap.put(SectionType.EDUCATION, new ArrayList<>());
+private void addSqlOrganizationSections(Resume r, Connection conn) throws SQLException {
+    try (PreparedStatement psOrg = conn.prepareStatement(INSERT_ORGANIZATION, Statement.RETURN_GENERATED_KEYS);
+         PreparedStatement psPeriod = conn.prepareStatement(INSERT_PERIOD);
+         PreparedStatement psLink = conn.prepareStatement(INSERT_RESUME_SECTION)) {
 
-        try (PreparedStatement ps = conn.prepareStatement(LOAD_ORGANIZATION_SECTION)) {
-            ps.setString(1, r.getUuid());
-            ResultSet rs = ps.executeQuery();
+        for (SectionType type : List.of(SectionType.EXPERIENCE, SectionType.EDUCATION)) {
+            OrganizationSection orgSection = (OrganizationSection) r.getSection(type);
+            if (orgSection == null) continue;
 
-            Map<Integer, Organization> orgById = new HashMap<>();
-            while (rs.next()) {
-                SectionType type = SectionType.valueOf(rs.getString("section_type"));
-                int orgId = rs.getInt("id");
-                String name = rs.getString("name");
-                String website = rs.getString("website");
+            int orgOrder = 0;
+            for (Organization org : orgSection.getOrganizations()) {
+                psOrg.setString(1, org.getName());
+                psOrg.setString(2, org.getUrl());
+                psOrg.executeUpdate();
 
-                orgById.putIfAbsent(orgId, new Organization(name, website));
-                orgMap.get(type).add(orgById.get(orgId));
-            }
-        }
+                int orgId = getGeneratedId(psOrg);
 
-        if (!orgMap.values().stream().allMatch(List::isEmpty)) {
-            String orgIds = orgMap.values().stream()
-                    .flatMap(List::stream)
-                    .map(org -> String.valueOf(org.hashCode()))
-                    .collect(Collectors.joining(","));
-
-            if (!orgIds.isEmpty()) {
-                try (PreparedStatement ps = conn.prepareStatement(
-                        "SELECT organization_id, start_date, end_date, title, description FROM period WHERE organization_id IN (" + orgIds + ")")) {
+                for (Organization.Period period : org.getPeriods()) {
+                    psPeriod.setInt(1, orgId);
+                    psPeriod.setObject(2, period.getStartDate());
+                    psPeriod.setObject(3, period.getEndDate());
+                    psPeriod.setString(4, period.getTitle());
+                    psPeriod.setString(5, period.getDescription());
+                    psPeriod.addBatch();
                 }
+                psPeriod.executeBatch();
+                psPeriod.clearBatch();
+
+                psLink.setString(1, r.getUuid());
+                psLink.setString(2, type.name());
+                psLink.setInt(3, orgId);
+                psLink.setInt(4, orgOrder++);
+                psLink.addBatch();
             }
+            psLink.executeBatch();
+            psLink.clearBatch();
         }
+    }
+}
 
-        try (PreparedStatement ps = conn.prepareStatement(
-                """
-                SELECT p.organization_id, p.start_date, p.end_date, p.title, p.description
-                FROM period p
-                JOIN resume_section rs ON p.organization_id = rs.organization_id
-                WHERE rs.resume_uuid = ?
-                ORDER BY p.organization_id, p.start_date
-                """)) {
-            ps.setString(1, r.getUuid());
-            ResultSet rs = ps.executeQuery();
+private int getGeneratedId(PreparedStatement ps) throws SQLException {
+    try (ResultSet rs = ps.getGeneratedKeys()) {
+        if (rs.next()) {
+            return rs.getInt(1);
+        }
+        throw new SQLException("No ID returned");
+    }
+}
 
-            Map<Integer, List<Organization.Period>> periods = new HashMap<>();
-            while (rs.next()) {
-                int orgId = rs.getInt("organization_id");
-                LocalDate start = rs.getObject("start_date", LocalDate.class);
-                LocalDate end = rs.getObject("end_date", LocalDate.class);
-                String title = rs.getString("title");
-                String desc = rs.getString("description");
+private void loadSqlContacts(Resume r, Connection conn) throws SQLException {
+    try (PreparedStatement ps = conn.prepareStatement(LOAD_CONTACT)) {
+        ps.setString(1, r.getUuid());
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            ContactType type = ContactType.valueOf(rs.getString("type"));
+            String value = rs.getString("value");
+            r.addContact(type, value);
+        }
+    }
+}
 
-                periods.computeIfAbsent(orgId, k -> new ArrayList<>())
-                        .add(new Organization.Period(start.getYear(), start.getMonth(), end != null ? end.getYear() : 0, end != null ? end.getMonth() : null, title, desc));
-            }
+private void loadSqlSections(Resume r, Connection conn) throws SQLException {
+    try (PreparedStatement ps = conn.prepareStatement(LOAD_SECTION)) {
+        ps.setString(1, r.getUuid());
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            SectionType type = SectionType.valueOf(rs.getString("type"));
+            String value = rs.getString("value");
+            Section section = switch (type) {
+                case OBJECTIVE, PERSONAL -> new TextSection(value);
+                case ACHIEVEMENT, QUALIFICATIONS -> new ListSection(value.split("\n"));
+                default -> throw new IllegalStateException();
+            };
+            r.addSection(type, section);
+        }
+    }
+}
 
-            for (var entry : orgMap.entrySet()) {
-                for (Organization org : entry.getValue()) {
-                    List<Organization.Period> list = periods.getOrDefault(org.hashCode(), List.of());
-                    org.getPeriods().addAll(list);
-                }
-                r.addSection(entry.getKey(), new OrganizationSection(entry.getValue()));
+private void loadOrganizationSections(Resume r, Connection conn) throws SQLException {
+    Map<SectionType, List<Organization>> orgMap = new EnumMap<>(SectionType.class);
+    orgMap.put(SectionType.EXPERIENCE, new ArrayList<>());
+    orgMap.put(SectionType.EDUCATION, new ArrayList<>());
+
+    try (PreparedStatement ps = conn.prepareStatement(LOAD_ORGANIZATION_SECTION)) {
+        ps.setString(1, r.getUuid());
+        ResultSet rs = ps.executeQuery();
+
+        Map<Integer, Organization> orgById = new HashMap<>();
+        while (rs.next()) {
+            SectionType type = SectionType.valueOf(rs.getString("section_type"));
+            int orgId = rs.getInt("id");
+            String name = rs.getString("name");
+            String website = rs.getString("website");
+
+            orgById.putIfAbsent(orgId, new Organization(name, website));
+            orgMap.get(type).add(orgById.get(orgId));
+        }
+    }
+
+    if (!orgMap.values().stream().allMatch(List::isEmpty)) {
+        String orgIds = orgMap.values().stream()
+                .flatMap(List::stream)
+                .map(org -> String.valueOf(org.hashCode()))
+                .collect(Collectors.joining(","));
+
+        if (!orgIds.isEmpty()) {
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "SELECT organization_id, start_date, end_date, title, description FROM period WHERE organization_id IN (" + orgIds + ")")) {
             }
         }
     }
 
-    private void deleteByUuid(Connection conn, String table, String uuid) throws SQLException {
-        try (PreparedStatement ps = conn.prepareStatement(
-                "DELETE FROM " + table + " WHERE resume_uuid = ?")) {
-            ps.setString(1, uuid);
-            ps.executeUpdate();
-        }
-    }
+    try (PreparedStatement ps = conn.prepareStatement(
+            """
+                    SELECT p.organization_id, p.start_date, p.end_date, p.title, p.description
+                    FROM period p
+                    JOIN resume_section rs ON p.organization_id = rs.organization_id
+                    WHERE rs.resume_uuid = ?
+                    ORDER BY p.organization_id, p.start_date
+                    """)) {
+        ps.setString(1, r.getUuid());
+        ResultSet rs = ps.executeQuery();
 
-    private void deleteByUuidAndType(Connection conn, String table, String uuid, String... types) throws SQLException {
-        String placeholders = String.join(",", Collections.nCopies(types.length, "?"));
-        try (PreparedStatement ps = conn.prepareStatement(
-                "DELETE FROM " + table + " WHERE resume_uuid = ? AND section_type IN (" + placeholders + ")")) {
-            ps.setString(1, uuid);
-            for (int i = 0; i < types.length; i++) {
-                ps.setString(i + 2, types[i]);
+        Map<Integer, List<Organization.Period>> periods = new HashMap<>();
+        while (rs.next()) {
+            int orgId = rs.getInt("organization_id");
+            LocalDate start = rs.getObject("start_date", LocalDate.class);
+            LocalDate end = rs.getObject("end_date", LocalDate.class);
+            String title = rs.getString("title");
+            String desc = rs.getString("description");
+
+            periods.computeIfAbsent(orgId, k -> new ArrayList<>())
+                    .add(new Organization.Period(start.getYear(), start.getMonth(), end != null ? end.getYear() : 0, end != null ? end.getMonth() : null, title, desc));
+        }
+
+        for (var entry : orgMap.entrySet()) {
+            for (Organization org : entry.getValue()) {
+                List<Organization.Period> list = periods.getOrDefault(org.hashCode(), List.of());
+                org.getPeriods().addAll(list);
             }
-            ps.executeUpdate();
+            r.addSection(entry.getKey(), new OrganizationSection(entry.getValue()));
         }
     }
+}
+
+private void deleteByUuid(Connection conn, String table, String uuid) throws SQLException {
+    try (PreparedStatement ps = conn.prepareStatement(
+            "DELETE FROM " + table + " WHERE resume_uuid = ?")) {
+        ps.setString(1, uuid);
+        ps.executeUpdate();
+    }
+}
+
+private void deleteByUuidAndType(Connection conn, String table, String uuid, String... types) throws SQLException {
+    String placeholders = String.join(",", Collections.nCopies(types.length, "?"));
+    try (PreparedStatement ps = conn.prepareStatement(
+            "DELETE FROM " + table + " WHERE resume_uuid = ? AND section_type IN (" + placeholders + ")")) {
+        ps.setString(1, uuid);
+        for (int i = 0; i < types.length; i++) {
+            ps.setString(i + 2, types[i]);
+        }
+        ps.executeUpdate();
+    }
+}
 }
