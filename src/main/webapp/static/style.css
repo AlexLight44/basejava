@@ -12,3 +12,18 @@ footer {
     padding: 5px 20px;
     margin: 20px 0;
 }
+.resume-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.resume-table th,
+.resume-table td {
+    border: 1px solid #2821cd;
+    padding: 8px;
+    text-align: left;
+}
+
+.resume-table th {
+    background-color: #7319c6;
+}

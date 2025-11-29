@@ -31,6 +31,11 @@ public class SqlStorage implements Storage {
             "                ORDER BY rs.section_type, rs.position_order";
 
     public SqlStorage(String dbUrl, String dbUser, String dbPassword) {
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException(e);
+        }
         ConnectionFactory connectionFactory = () -> DriverManager.getConnection(dbUrl, dbUser, dbPassword);
         this.executor = new Executor(connectionFactory);
     }
