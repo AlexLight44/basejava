@@ -51,7 +51,23 @@ public class ResumeServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
         resp.setContentType("text/html;charset=UTF-8");
 
-        // Собираем данные для шаблона
+        String uuid = req.getParameter("uuid");
+        String action = req.getParameter("action");
+
+        if (uuid != null && action != null) {
+            switch (action) {
+                case "delete":
+                    storage.delete(uuid);
+                    resp.sendRedirect("resume");  // обратно на список
+                    return;
+                case "edit":
+                    // можно просто перейти на форму редактирования
+                    // пока просто редирект на просмотр (потом сделаешь форму)
+                    resp.sendRedirect("resume?uuid=" + uuid);
+                    return;
+            }
+        }
+
         List<Resume> resumes = storage.getAllSorted();
         List<Map<String, String>> list = resumes.stream()
                 .map(r -> Map.of(
