@@ -1,35 +1,39 @@
-header {
-    background: none repeat scroll 0 0 #c14979;
-    color: #4a9e2e;
-    font-size: 20px;
-    padding: 5px 20px;
+body {
+    background-color: #1e1e2e;
+    color: #cdd6f4;
+    font-family: Arial, sans-serif;
+    margin: 40px;
 }
 
-footer {
-    background: none repeat scroll 0 0 #bd1d5a;
-    color: #318122;
-    font-size: 20px;
-    padding: 5px 20px;
-    margin: 20px 0;
+a {
+    color: #89b4fa;
 }
+
+a:hover {
+    color: #b4befe;
+}
+
 .resume-table {
     border-collapse: collapse;
     width: 100%;
-}
-
-.resume-table th,
-.resume-table td {
-    border: 1px solid #2821cd;
-    padding: 8px;
-    text-align: left;
+    background-color: #11111b;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
 }
 
 .resume-table th {
-    background-color: #1930c6;
+    background-color: #313244;
+    color: #cba6f7;
+    padding: 12px;
+    text-align: left;
 }
 
-.actions {
-    white-space: nowrap;
+.resume-table td {
+    padding: 12px;
+    border-bottom: 1px solid #313244;
+}
+
+.resume-table tr:hover {
+    background-color: #181825;
 }
 
 .btn {
@@ -37,21 +41,11 @@ footer {
     padding: 6px 12px;
     margin: 0 4px;
     text-decoration: none;
-    border-radius: 4px;
-    font-size: 14px;
-    cursor: pointer;
+    border-radius: 6px;
+    font-size: 13px;
+    transition: all 0.2s;
 }
 
-.btn.edit {
-    background-color: #007bff;
-    color: white;
-}
-
-.btn.delete {
-    background-color: #dc3545;
-    color: white;
-}
-
-.btn:hover {
-    opacity: 0.9;
-}
+.btn.edit   { background: #89b4fa; color: #1e1e2e; }
+.btn.delete { background: #f38ba8; color: #1e1e2e; }
+.btn:hover  { transform: translateY(-2px); }

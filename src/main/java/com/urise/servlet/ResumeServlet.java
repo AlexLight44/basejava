@@ -6,7 +6,6 @@ import com.urise.model.Resume;
 import com.urise.storage.Storage;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -24,21 +23,22 @@ import java.util.Map;
 public class ResumeServlet extends HttpServlet {
 
     private Storage storage;
-    private Template template;
+    private Configuration cfg;
+    private Template listTemplate;
+    private Template viewTemplate;
 
     @Override
     public void init() throws ServletException {
-        super.init();
         storage = Config.get().getStorage();
 
         try {
-            Configuration cfg = new Configuration(Configuration.VERSION_2_3_33);
-
+            cfg = new Configuration(Configuration.VERSION_2_3_33);
             cfg.setDirectoryForTemplateLoading(
                     new File(getServletContext().getRealPath("/WEB-INF/templates"))
             );
             cfg.setDefaultEncoding("UTF-8");
-            template = cfg.getTemplate("resumes.ftl");
+            listTemplate = cfg.getTemplate("resumes.ftl");
+            viewTemplate = cfg.getTemplate("resume.ftl");
         } catch (IOException e) {
             throw new ServletException("Не могу загрузить шаблон", e);
         }
@@ -53,35 +53,38 @@ public class ResumeServlet extends HttpServlet {
 
         String uuid = req.getParameter("uuid");
         String action = req.getParameter("action");
-
-        if (uuid != null && action != null) {
-            switch (action) {
-                case "delete":
-                    storage.delete(uuid);
-                    resp.sendRedirect("resume");  // обратно на список
-                    return;
-                case "edit":
-                    // можно просто перейти на форму редактирования
-                    // пока просто редирект на просмотр (потом сделаешь форму)
-                    resp.sendRedirect("resume?uuid=" + uuid);
-                    return;
-            }
+//delete
+        if (uuid != null && "delete".equals(action)) {
+            storage.delete(uuid);
+            resp.sendRedirect("resume");
+            return;
         }
-
-        List<Resume> resumes = storage.getAllSorted();
-        List<Map<String, String>> list = resumes.stream()
-                .map(r -> Map.of(
-                        "uuid", r.getUuid(),
-                        "fullName", r.getFullName(),
-                        "email", r.getContact(ContactType.EMAIL).toString()
-                ))
-                .toList();
 
         try (Writer out = resp.getWriter()) {
             Map<String, Object> data = new HashMap<>();
-            data.put("resumes", list);
-            template.process(data, out);
-        } catch (TemplateException e) {
+
+            if (uuid == null || uuid.isEmpty()) {
+
+                List<Resume> resumes = storage.getAllSorted();
+                List<Map<String, String>> list = resumes.stream()
+                        .map(r -> Map.of(
+                                "uuid", r.getUuid(),
+                                "fullName", r.getFullName(),
+                                "email", r.getContact(ContactType.EMAIL) != null
+                                        ? r.getContact(ContactType.EMAIL).toString() : "—"
+                        ))
+                        .toList();
+
+                data.put("resumes", list);
+                listTemplate.process(data, out);
+
+            } else {
+                Resume resume = storage.get(uuid);
+                data.put("resume", resume);
+                viewTemplate.process(data, out);
+            }
+
+        } catch (Exception e) {
             throw new IOException(e);
         }
     }
