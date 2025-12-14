@@ -14,7 +14,7 @@ public class SqlStorage implements Storage {
     private static final String INSERT_CONTACT =
             "INSERT INTO contact (resume_uuid, type, value) VALUES (?, ?, ?)";
     private static final String INSERT_ORGANIZATION =
-            "INSERT INTO organization (name, website) VALUES (?, ?) RETURNING id";
+            "INSERT INTO organization (resume_uuid, name, website) VALUES (?, ?, ?) RETURNING id";
 
     private static final String INSERT_PERIOD =
             "INSERT INTO period (organization_id, start_date, end_date, title, description) VALUES (?, ?, ?, ?, ?)";
@@ -64,6 +64,7 @@ public class SqlStorage implements Storage {
             deleteByUuid(conn, "contact", r.getUuid());
             deleteByUuid(conn, "section", r.getUuid());
             deleteByUuidAndType(conn, "resume_section", r.getUuid(), "EXPERIENCE", "EDUCATION");
+            deleteByUuid(conn, "organization", r.getUuid());
             addSqlContacts(r, conn);
             addSqlSections(r, conn);
             addSqlOrganizationSections(r, conn);
@@ -246,8 +247,9 @@ private void addSqlOrganizationSections(Resume r, Connection conn) throws SQLExc
 
             int orgOrder = 0;
             for (Organization org : orgSection.getOrganizations()) {
-                psOrg.setString(1, org.getName());
-                psOrg.setString(2, org.getUrl());
+                psOrg.setString(1, r.getUuid());
+                psOrg.setString(2, org.getName());
+                psOrg.setString(3, org.getUrl());
                 psOrg.executeUpdate();
 
                 int orgId = getGeneratedId(psOrg);
@@ -318,11 +320,12 @@ private void loadOrganizationSections(Resume r, Connection conn) throws SQLExcep
     orgMap.put(SectionType.EXPERIENCE, new ArrayList<>());
     orgMap.put(SectionType.EDUCATION, new ArrayList<>());
 
+    Map<Integer, Organization> orgById = new HashMap<>();
+
     try (PreparedStatement ps = conn.prepareStatement(LOAD_ORGANIZATION_SECTION)) {
         ps.setString(1, r.getUuid());
         ResultSet rs = ps.executeQuery();
 
-        Map<Integer, Organization> orgById = new HashMap<>();
         while (rs.next()) {
             SectionType type = SectionType.valueOf(rs.getString("section_type"));
             int orgId = rs.getInt("id");

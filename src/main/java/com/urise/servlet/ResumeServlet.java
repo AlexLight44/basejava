@@ -5,6 +5,7 @@ import com.urise.model.ContactType;
 import com.urise.model.Resume;
 import com.urise.storage.Storage;
 import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapperBuilder;
 import freemarker.template.Template;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -37,6 +38,7 @@ public class ResumeServlet extends HttpServlet {
                     new File(getServletContext().getRealPath("/WEB-INF/templates"))
             );
             cfg.setDefaultEncoding("UTF-8");
+            cfg.setObjectWrapper(new DefaultObjectWrapperBuilder(Configuration.VERSION_2_3_33).build());
             listTemplate = cfg.getTemplate("resumes.ftl");
             viewTemplate = cfg.getTemplate("resume.ftl");
         } catch (IOException e) {

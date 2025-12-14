@@ -29,9 +29,13 @@ CREATE UNIQUE INDEX section_uuid_type_index
 CREATE TABLE organization
 (
     id      SERIAL PRIMARY KEY,
-    NAME    TEXT NOT NULL,
+    resume_uuid VARCHAR(36) NOT NULL REFERENCES resume (uuid) ON DELETE CASCADE,
+    name    TEXT NOT NULL,
     website TEXT
 );
+
+CREATE UNIQUE INDEX organization_uuid_type_index
+    ON organization (resume_uuid, name);
 
 CREATE TABLE period
 (

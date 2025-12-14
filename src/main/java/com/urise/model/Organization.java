@@ -28,7 +28,7 @@ public class Organization implements Serializable {
     public Organization(String name, String url, Period... periods) {
         this.name = name;
         this.url = url;
-        Arrays.asList(periods);
+        this.periods = Arrays.asList(periods);
     }
 
     public Organization(String name, String url, List<Period> periods) {
@@ -94,7 +94,7 @@ public class Organization implements Serializable {
 
         public Period(LocalDate startDate, LocalDate endDate, String title, String description) {
             Objects.requireNonNull(startDate, "startDate must not be null");
-            Objects.requireNonNull(endDate, "endDate must not be null");
+
             Objects.requireNonNull(title, "title must not be null");
             this.startDate = startDate;
             this.endDate = endDate;

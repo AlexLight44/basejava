@@ -23,10 +23,10 @@ public class ResumeTestData {
         r.addSection(SectionType.QUALIFICATIONS, new ListSection("Квалификация1", "Квалификация2"));
         r.addSection(SectionType.EXPERIENCE,
                 new OrganizationSection(List.of(
-                        new Organization("Organization1", "http1",
+                        new Organization("Organization1", "https://example.com",
                                 new Organization.Period(2010, Month.JANUARY, 2012, Month.FEBRUARY, "period1", "description1"),
                                 new Organization.Period(2012, Month.JANUARY, 2014, Month.FEBRUARY, "period2", "description2")
-                        ), new Organization("Organization2", "http2",
+                        ), new Organization("Organization2", "https://example.com",
                                 Arrays.asList(
                                         new Organization.Period(2014, Month.JANUARY, 2017, Month.JANUARY, "period3", "description3"),
                                         new Organization.Period(2017, Month.JANUARY, 2020, Month.AUGUST, "period4", "description4")
@@ -34,11 +34,11 @@ public class ResumeTestData {
                                 )))));
         r.addSection(SectionType.EDUCATION,
                 new OrganizationSection(List.of(
-                        new Organization("Education1", "httpE1",
+                        new Organization("Education1", "https://example.com",
                                 Arrays.asList(
                                         new Organization.Period(2020, Month.JANUARY, 2022, Month.DECEMBER, "period5", "description5"),
                                         new Organization.Period(2022, Month.JANUARY, 2024, Month.JANUARY, "period6", "description6")
-                                )), new Organization("Education2", "httpE2",
+                                )), new Organization("Education2", "https://example.com",
                                 Arrays.asList(
                                         new Organization.Period(2024, Month.JANUARY, "period7", "description7"),
                                         new Organization.Period(2025, Month.JANUARY, "period8", "description8")
