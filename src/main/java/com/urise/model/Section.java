@@ -30,5 +30,15 @@ public abstract class Section implements Serializable {
         this.type = type;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Section section = (Section) o;
+        return type == section.type;
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(type);
+    }
 }

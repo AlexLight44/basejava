@@ -3,11 +3,12 @@ package com.urise.storage.sql;
 import com.urise.exeption.NotExistStorageException;
 import com.urise.model.*;
 import com.urise.storage.Storage;
+import com.urise.util.DateUtil;
 
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class SqlStorage implements Storage {
     private final Executor executor;
@@ -125,25 +126,33 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        final String query = "SELECT * FROM resume r LEFT JOIN contact c ON r.uuid = c.resume_uuid ORDER BY full_name,uuid";
+        return executor.transactionExecute(conn -> {
+            Map<String, Resume> resumeMap = new LinkedHashMap<>();
 
-        return executor.execute(query, ps ->
-        {
-            try (ResultSet resultSet = ps.executeQuery()) {
-                Map<String, Resume> resumeMap = new LinkedHashMap<>();
-                while (resultSet.next()) {
-                    String uuid = resultSet.getString("uuid");
-                    String fullName = resultSet.getString("full_name");
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "SELECT r.uuid, r.full_name, c.type, c.value " +
+                            "FROM resume r LEFT JOIN contact c ON r.uuid = c.resume_uuid " +
+                            "ORDER BY r.full_name, r.uuid")) {
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    String uuid = rs.getString("uuid");
+                    String fullName = rs.getString("full_name");
                     Resume resume = resumeMap.computeIfAbsent(uuid, k -> new Resume(uuid, fullName));
 
-                    String contactType = resultSet.getString("type");
-                    String contactValue = resultSet.getString("value");
-                    if (contactType != null && contactValue != null) {
-                        resume.addContact(ContactType.valueOf(contactType), contactValue);
+                    String type = rs.getString("type");
+                    String value = rs.getString("value");
+                    if (type != null && value != null) {
+                        resume.addContact(ContactType.valueOf(type), value);
                     }
                 }
-                return new ArrayList<>(resumeMap.values());
             }
+
+            for (Resume r : resumeMap.values()) {
+                loadSqlSections(r, conn);
+                loadOrganizationSections(r, conn);
+            }
+
+            return new ArrayList<>(resumeMap.values());
         });
     }
 
@@ -257,13 +266,14 @@ private void addSqlOrganizationSections(Resume r, Connection conn) throws SQLExc
                 for (Organization.Period period : org.getPeriods()) {
                     psPeriod.setInt(1, orgId);
                     psPeriod.setObject(2, period.getStartDate());
+                    LocalDate endDate = period.getEndDate();
+                    psPeriod.setObject(3, endDate.equals(DateUtil.NOW) ? null : endDate);
                     psPeriod.setObject(3, period.getEndDate());
                     psPeriod.setString(4, period.getTitle());
                     psPeriod.setString(5, period.getDescription());
                     psPeriod.addBatch();
                 }
-                psPeriod.executeBatch();
-                psPeriod.clearBatch();
+
 
                 psLink.setString(1, r.getUuid());
                 psLink.setString(2, type.name());
@@ -271,9 +281,10 @@ private void addSqlOrganizationSections(Resume r, Connection conn) throws SQLExc
                 psLink.setInt(4, orgOrder++);
                 psLink.addBatch();
             }
-            psLink.executeBatch();
-            psLink.clearBatch();
+
         }
+        psPeriod.executeBatch();
+        psLink.executeBatch();
     }
 }
 
@@ -315,74 +326,75 @@ private void loadSqlSections(Resume r, Connection conn) throws SQLException {
     }
 }
 
-private void loadOrganizationSections(Resume r, Connection conn) throws SQLException {
-    Map<SectionType, List<Organization>> orgMap = new EnumMap<>(SectionType.class);
-    orgMap.put(SectionType.EXPERIENCE, new ArrayList<>());
-    orgMap.put(SectionType.EDUCATION, new ArrayList<>());
+    private void loadOrganizationSections(Resume r, Connection conn) throws SQLException {
+        Map<SectionType, List<Organization>> orgMap = new EnumMap<>(SectionType.class);
+        orgMap.put(SectionType.EXPERIENCE, new ArrayList<>());
+        orgMap.put(SectionType.EDUCATION, new ArrayList<>());
 
-    Map<Integer, Organization> orgById = new HashMap<>();
+        Map<Integer, Organization> orgById = new HashMap<>();
 
-    try (PreparedStatement ps = conn.prepareStatement(LOAD_ORGANIZATION_SECTION)) {
-        ps.setString(1, r.getUuid());
-        ResultSet rs = ps.executeQuery();
+        try (PreparedStatement ps = conn.prepareStatement(LOAD_ORGANIZATION_SECTION)) {
+            ps.setString(1, r.getUuid());
+            ResultSet rs = ps.executeQuery();
 
-        while (rs.next()) {
-            SectionType type = SectionType.valueOf(rs.getString("section_type"));
-            int orgId = rs.getInt("id");
-            String name = rs.getString("name");
-            String website = rs.getString("website");
+            while (rs.next()) {
+                SectionType type = SectionType.valueOf(rs.getString("section_type"));
+                int orgId = rs.getInt("id");
+                String name = rs.getString("name");
+                String website = rs.getString("website");
 
-            orgById.putIfAbsent(orgId, new Organization(name, website));
-            orgMap.get(type).add(orgById.get(orgId));
+                orgById.computeIfAbsent(orgId, k -> new Organization(name, website));
+                orgMap.get(type).add(orgById.get(orgId));
+            }
         }
-    }
 
-    if (!orgMap.values().stream().allMatch(List::isEmpty)) {
-        String orgIds = orgMap.values().stream()
-                .flatMap(List::stream)
-                .map(org -> String.valueOf(org.hashCode()))
-                .collect(Collectors.joining(","));
+        try (PreparedStatement ps = conn.prepareStatement(
+                """
+                        SELECT p.organization_id, p.start_date, p.end_date, p.title, p.description
+                        FROM period p
+                        JOIN resume_section rs ON p.organization_id = rs.organization_id
+                        WHERE rs.resume_uuid = ?
+                        ORDER BY p.organization_id, p.start_date  -- ← Без rs.org_order, как у тебя
+                        """)) {
+            ps.setString(1, r.getUuid());
+            ResultSet rs = ps.executeQuery();
 
-        if (!orgIds.isEmpty()) {
-            try (PreparedStatement ps = conn.prepareStatement(
-                    "SELECT organization_id, start_date, end_date, title, description FROM period WHERE organization_id IN (" + orgIds + ")")) {
+            Map<Integer, List<Organization.Period>> periodsByOrgId = new HashMap<>();
+            while (rs.next()) {
+                int orgId = rs.getInt("organization_id");
+                LocalDate start = rs.getObject("start_date", LocalDate.class);
+                LocalDate end = rs.getObject("end_date", LocalDate.class);
+
+                int startYear = start.getYear();
+                Month startMonth = start.getMonth();
+
+                int endYear = (end != null) ? end.getYear() : 0;  // Или ваша константа
+                Month endMonth = (end != null) ? end.getMonth() : null;
+
+                String title = rs.getString("title");
+                String desc = rs.getString("description");
+
+                periodsByOrgId.computeIfAbsent(orgId, k -> new ArrayList<>())
+                        .add(new Organization.Period(startYear, startMonth, endYear, endMonth, title, desc));
+            }
+
+            for (Map.Entry<Integer, Organization> entry : orgById.entrySet()) {
+                int orgId = entry.getKey();
+                Organization org = entry.getValue();
+                List<Organization.Period> periodsList = periodsByOrgId.getOrDefault(orgId, List.of());
+
+                for (Organization.Period p : periodsList) {
+                    org.getPeriods().add(p);
+                }
+            }
+
+            for (Map.Entry<SectionType, List<Organization>> entry : orgMap.entrySet()) {
+                if (!entry.getValue().isEmpty()) {
+                    r.addSection(entry.getKey(), new OrganizationSection(entry.getValue()));
+                }
             }
         }
     }
-
-    try (PreparedStatement ps = conn.prepareStatement(
-            """
-                    SELECT p.organization_id, p.start_date, p.end_date, p.title, p.description
-                    FROM period p
-                    JOIN resume_section rs ON p.organization_id = rs.organization_id
-                    WHERE rs.resume_uuid = ?
-                    ORDER BY p.organization_id, p.start_date
-                    """)) {
-        ps.setString(1, r.getUuid());
-        ResultSet rs = ps.executeQuery();
-
-        Map<Integer, List<Organization.Period>> periods = new HashMap<>();
-        while (rs.next()) {
-            int orgId = rs.getInt("organization_id");
-            LocalDate start = rs.getObject("start_date", LocalDate.class);
-            LocalDate end = rs.getObject("end_date", LocalDate.class);
-            String title = rs.getString("title");
-            String desc = rs.getString("description");
-
-            periods.computeIfAbsent(orgId, k -> new ArrayList<>())
-                    .add(new Organization.Period(start.getYear(), start.getMonth(), end != null ? end.getYear() : 0, end != null ? end.getMonth() : null, title, desc));
-        }
-
-        for (var entry : orgMap.entrySet()) {
-            for (Organization org : entry.getValue()) {
-                List<Organization.Period> list = periods.getOrDefault(org.hashCode(), List.of());
-                org.getPeriods().addAll(list);
-            }
-            r.addSection(entry.getKey(), new OrganizationSection(entry.getValue()));
-        }
-    }
-}
-
 private void deleteByUuid(Connection conn, String table, String uuid) throws SQLException {
     try (PreparedStatement ps = conn.prepareStatement(
             "DELETE FROM " + table + " WHERE resume_uuid = ?")) {

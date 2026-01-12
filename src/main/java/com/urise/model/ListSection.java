@@ -42,7 +42,6 @@ public class ListSection extends Section {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ListSection that = (ListSection) o;
         return Objects.equals(items, that.items);
@@ -50,6 +49,6 @@ public class ListSection extends Section {
 
     @Override
     public int hashCode() {
-        return Objects.hash(items);
+        return Objects.hashCode(items);
     }
 }

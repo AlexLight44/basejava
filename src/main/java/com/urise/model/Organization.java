@@ -24,17 +24,22 @@ public class Organization implements Serializable {
 
     public Organization() {
     }
+    public Organization(String name, String url) {
+        this.name = name;
+        this.url = url;
+        this.periods = new ArrayList<>();
+    }
 
     public Organization(String name, String url, Period... periods) {
         this.name = name;
         this.url = url;
-        this.periods = Arrays.asList(periods);
+        this.periods = (periods != null) ? new ArrayList<>(Arrays.asList(periods)) : new ArrayList<>();  // ← Фикс: копия в mutable ArrayList
     }
 
     public Organization(String name, String url, List<Period> periods) {
         this.name = name;
         this.url = url;
-        this.periods = periods;
+        this.periods = (periods != null) ? new ArrayList<>(periods) : new ArrayList<>();
     }
 
     public String getName() {
@@ -49,9 +54,12 @@ public class Organization implements Serializable {
         return periods;
     }
 
+    public void setPeriods(List<Period> periods) {
+        this.periods = periods;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Organization that = (Organization) o;
         return Objects.equals(name, that.name) && Objects.equals(url, that.url) && Objects.equals(periods, that.periods);
@@ -118,9 +126,9 @@ public class Organization implements Serializable {
             return description;
         }
 
+
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Period period = (Period) o;
             return Objects.equals(startDate, period.startDate) && Objects.equals(endDate, period.endDate) && Objects.equals(title, period.title) && Objects.equals(description, period.description);
