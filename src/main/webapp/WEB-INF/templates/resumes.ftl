@@ -7,6 +7,7 @@
 </head>
 <body>
 <section>
+    <a href="resume?action=edit" class="btn create" style="display: block; margin: 20px 0; padding: 12px 24px; background: #2196F3; color: white; text-decoration: none; border-radius: 4px;">+ Добавить новое резюме</a>
     <table class="resume-table">
         <tr>
             <th>Имя</th>
