@@ -66,7 +66,33 @@ public class ResumeServlet extends HttpServlet {
         try (Writer out = resp.getWriter()) {
             Map<String, Object> data = new HashMap<>();
 
-            if (uuid == null || uuid.isEmpty()) {
+            if ("edit".equals(action)) {
+                Resume resume;
+                if (uuid != null && !uuid.isEmpty()) {
+                    resume = storage.get(uuid);
+                } else {
+                    resume = new Resume();
+
+                }
+                data.put("resume", resume);
+                data.put("contactTypes", ContactType.values());
+                editTemplate.process(data, out);
+            } else if (uuid != null && !uuid.isEmpty()) {
+
+                Resume resume = storage.get(uuid);
+                System.out.println("Просмотр резюме: " + resume.getFullName());
+                System.out.println("Контакты: " + resume.getContacts().size());
+                System.out.println("Секции всего: " + resume.getSections().size());
+                if (resume.getSection(SectionType.EXPERIENCE) != null) {
+                    OrganizationSection exp = (OrganizationSection) resume.getSection(SectionType.EXPERIENCE);
+                    System.out.println("Опыт организаций: " + exp.getOrganizations().size());
+                    if (!exp.getOrganizations().isEmpty()) {
+                        System.out.println("Первый период: " + exp.getOrganizations().get(0).getPeriods());
+                    }
+                }
+                data.put("resume", resume);
+                viewTemplate.process(data, out);
+            } else {
 
                 List<Resume> resumes = storage.getAllSorted();
                 List<Map<String, String>> list = resumes.stream()
@@ -80,17 +106,7 @@ public class ResumeServlet extends HttpServlet {
 
                 data.put("resumes", list);
                 listTemplate.process(data, out);
-            } else if ("edit".equals(action)) {
-                Resume resume = (uuid != null && !uuid.isEmpty()) ? storage.get(uuid) : new Resume();
-                data.put("resume", resume);
-                data.put("contactTypes", ContactType.values());
-                editTemplate.process(data, out);
-            } else {
-                Resume resume = storage.get(uuid);
-                data.put("resume", resume);
-                viewTemplate.process(data, out);
             }
-
         } catch (Exception e) {
             throw new IOException(e);
         }
@@ -133,53 +149,51 @@ public class ResumeServlet extends HttpServlet {
         }
 
         for (SectionType type : new SectionType[]{SectionType.EXPERIENCE, SectionType.EDUCATION}) {
-            String orgValue = req.getParameter("org_" + type.name());
-            System.out.println("Parsing org for " + type + ": " + orgValue);
-            if (orgValue != null && !orgValue.trim().isEmpty()) {
-                List<Organization> orgs = new ArrayList<>();
-                String[] orgBlocks = orgValue.split("\n\n");
-                for (String block : orgBlocks) {
-                    if (block.trim().isEmpty()) continue;
-                    String[] lines = block.split("\n");
-                    if (lines.length < 1) continue;
+            List<Organization> orgs = new ArrayList<>();
+            String prefix = type.name().toLowerCase() + "_org"; //
+            for (int orgIndex = 0; orgIndex < 20; orgIndex++) {
+                String orgName = req.getParameter(prefix + orgIndex + "_name");
+                if (orgName == null || orgName.trim().isEmpty()) continue;
 
-                    String[] orgParts = lines[0].split("\\|");
-                    String name = orgParts[0].trim();
-                    String url = (orgParts.length > 1) ? orgParts[1].trim() : null;
+                String orgUrl = req.getParameter(prefix + orgIndex + "_url");
+                List<Organization.Period> periods = new ArrayList<>();
 
-                    List<Organization.Period> periods = new ArrayList<>();
-                    for (int i = 1; i < lines.length; i++) {
-                        if (lines[i].trim().isEmpty()) continue;
-                        String[] periodParts = lines[i].split("\\|");
-                        if (periodParts.length < 2) continue;
+                String[] starts = req.getParameterValues(prefix + orgIndex + "_period_start[]");
+                String[] ends = req.getParameterValues(prefix + orgIndex + "_period_end[]");
+                String[] titles = req.getParameterValues(prefix + orgIndex + "_period_title[]");
+                String[] descs = req.getParameterValues(prefix + orgIndex + "_period_desc[]");
 
-                        String dateStr = periodParts[0].trim();
-                        String[] dates = dateStr.split("-");
-                        LocalDate start = LocalDate.parse(dates[0].trim());
-                        LocalDate end = (dates.length > 1 && !dates[1].trim().equals("NOW")) ? LocalDate.parse(dates[1].trim()) : DateUtil.NOW;
-
-                        String title = periodParts[1].trim();
-                        String desc = (periodParts.length > 2) ? periodParts[2].trim() : null;
-
-                        periods.add(new Organization.Period(start, end, title, desc));
-                    }
-
-                    if (!periods.isEmpty()) {
-                        orgs.add(new Organization(name, url, periods));
+                if (starts != null) {
+                    for (int p = 0; p < starts.length; p++) {
+                        if (starts[p] == null || starts[p].isEmpty()) continue;
+                        LocalDate start = LocalDate.parse(starts[p]);
+                        LocalDate end = (ends[p] != null && !ends[p].isEmpty()) ? LocalDate.parse(ends[p]) : DateUtil.NOW;
+                        String title = (titles.length > p) ? titles[p] : "";
+                        String desc = (descs.length > p) ? descs[p] : null;
+                        if (!title.isEmpty()) {
+                            periods.add(new Organization.Period(start, end, title, desc));
+                        }
                     }
                 }
-                if (!orgs.isEmpty()) {
-                    r.addSection(type, new OrganizationSection(orgs));
+
+                if (!periods.isEmpty()) {
+                    orgs.add(new Organization(orgName, orgUrl, periods));
                 }
             }
-        }
 
+            if (!orgs.isEmpty()) {
+                r.addSection(type, new OrganizationSection(orgs));
+            } else {
+                r.getSections().remove(type);
+            }
+        }
+        // Сохранение
         if ("create".equals(action)) {
             storage.save(r);
         } else {
             storage.update(r);
         }
 
-        resp.sendRedirect("resume");
+        resp.sendRedirect("resume?uuid=" + r.getUuid());
     }
 }
