@@ -66,7 +66,7 @@ Based on the classic [basejava](https://github.com/JavaOPs/basejava) course by G
 
 I successfully completed the "Java Web Developer" course with this project.
 
-![Certificate with honors](certificate.png)
+![Certificate with honors](certificate.jpg)
 
 ## Requirements
 
