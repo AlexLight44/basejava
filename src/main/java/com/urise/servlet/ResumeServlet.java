@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @WebServlet("/resume")
 public class ResumeServlet extends HttpServlet {
@@ -117,45 +118,59 @@ public class ResumeServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
         String uuid = req.getParameter("uuid");
         String fullName = req.getParameter("fullName");
-        String action = req.getParameter("action");
 
-        Resume r;
-        if ("create".equals(action)) {
+        if (fullName == null || fullName.trim().isEmpty()) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Full name must not be empty");
+            return;
+        }
+        fullName = fullName.trim();
+
+        final Resume r;
+        final boolean isNew = (uuid == null || uuid.trim().isEmpty());
+
+        if (isNew) {
             r = new Resume(UUID.randomUUID().toString(), fullName);
         } else {
-            r = storage.get(uuid);
+            r = storage.get(uuid.trim());
             r.setFullName(fullName);
         }
 
         r.getContacts().clear();
         for (ContactType type : ContactType.values()) {
             String value = req.getParameter("contact_" + type.name());
-            if (value != null && !value.isEmpty()) {
-                r.addContact(type, value);
+            if (value != null && !value.trim().isEmpty()) {
+                r.addContact(type, value.trim());
             }
         }
 
         r.getSections().clear();
         for (String typeName : new String[]{"PERSONAL", "OBJECTIVE", "ACHIEVEMENT", "QUALIFICATIONS"}) {
             String value = req.getParameter("section_" + typeName);
-            if (value != null && !value.isEmpty()) {
+            if (value != null && !value.trim().isEmpty()) {
                 SectionType type = SectionType.valueOf(typeName);
                 if (type == SectionType.PERSONAL || type == SectionType.OBJECTIVE) {
-                    r.addSection(type, new TextSection(value));
+                    r.addSection(type, new TextSection(value.trim()));
                 } else {
-                    r.addSection(type, new ListSection(Arrays.asList(value.split("\n"))));
+                    List<String> items = Arrays.stream(value.trim().split("\n"))
+                            .filter(line -> !line.isEmpty())
+                            .collect(Collectors.toList());
+                    if (!items.isEmpty()) {
+                        r.addSection(type, new ListSection(items));
+                    }
                 }
             }
         }
 
         for (SectionType type : new SectionType[]{SectionType.EXPERIENCE, SectionType.EDUCATION}) {
             List<Organization> orgs = new ArrayList<>();
-            String prefix = type.name().toLowerCase() + "_org"; //
+            String prefix = type.name().toLowerCase() + "_org";
             for (int orgIndex = 0; orgIndex < 20; orgIndex++) {
                 String orgName = req.getParameter(prefix + orgIndex + "_name");
                 if (orgName == null || orgName.trim().isEmpty()) continue;
 
                 String orgUrl = req.getParameter(prefix + orgIndex + "_url");
+                if (orgUrl != null) orgUrl = orgUrl.trim();
+
                 List<Organization.Period> periods = new ArrayList<>();
 
                 String[] starts = req.getParameterValues(prefix + orgIndex + "_period_start[]");
@@ -165,11 +180,17 @@ public class ResumeServlet extends HttpServlet {
 
                 if (starts != null) {
                     for (int p = 0; p < starts.length; p++) {
-                        if (starts[p] == null || starts[p].isEmpty()) continue;
-                        LocalDate start = LocalDate.parse(starts[p]);
-                        LocalDate end = (ends[p] != null && !ends[p].isEmpty()) ? LocalDate.parse(ends[p]) : DateUtil.NOW;
-                        String title = (titles.length > p) ? titles[p] : "";
-                        String desc = (descs.length > p) ? descs[p] : null;
+                        String startStr = starts[p];
+                        if (startStr == null || startStr.trim().isEmpty()) continue;
+
+                        LocalDate start = LocalDate.parse(startStr.trim());
+                        LocalDate end = (ends != null && p < ends.length && ends[p] != null && !ends[p].trim().isEmpty())
+                                ? LocalDate.parse(ends[p].trim())
+                                : DateUtil.NOW;
+
+                        String title = (titles != null && p < titles.length) ? titles[p].trim() : "";
+                        String desc = (descs != null && p < descs.length) ? descs[p].trim() : null;
+
                         if (!title.isEmpty()) {
                             periods.add(new Organization.Period(start, end, title, desc));
                         }
@@ -177,7 +198,7 @@ public class ResumeServlet extends HttpServlet {
                 }
 
                 if (!periods.isEmpty()) {
-                    orgs.add(new Organization(orgName, orgUrl, periods));
+                    orgs.add(new Organization(orgName.trim(), orgUrl, periods));
                 }
             }
 
@@ -187,13 +208,14 @@ public class ResumeServlet extends HttpServlet {
                 r.getSections().remove(type);
             }
         }
+
         // Сохранение
-        if ("create".equals(action)) {
+        if (isNew) {
             storage.save(r);
         } else {
             storage.update(r);
         }
 
-        resp.sendRedirect("resume?uuid=" + r.getUuid());
+        resp.sendRedirect("resume");
     }
 }
